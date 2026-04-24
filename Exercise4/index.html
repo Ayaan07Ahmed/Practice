@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown Timer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #273449;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #7dd3fc;
+      --danger: #f87171;
+      --success: #4ade80;
+      --finished: #facc15;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 640px;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .app__title {
+      margin: 0 0 0.25rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .app__subtitle {
+      margin: 0 0 1.5rem;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    .add {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .add__tabs {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--panel-2);
+      border-radius: 999px;
+      padding: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .add__tab {
+      flex: 1;
+      padding: 0.4rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      border-radius: 999px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.875rem;
+    }
+
+    .add__tab[aria-pressed="true"] {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .add__row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .add__row > input {
+      flex: 1;
+      min-width: 0;
+      padding: 0.55rem 0.75rem;
+      font: inherit;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .add__row > input:focus {
+      border-color: var(--accent);
+    }
+
+    .add__btn {
+      padding: 0.55rem 1.1rem;
+      font: inherit;
+      font-weight: 600;
+      color: #0f172a;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .add__btn:hover { background: var(--accent-hover); }
+
+    .add__error {
+      margin: 0.5rem 0 0;
+      min-height: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--danger);
+    }
+
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .empty {
+      margin: 0;
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    .empty[hidden] { display: none; }
+
+    .pane[hidden] { display: none; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card__row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card__label {
+      flex: 1;
+      min-width: 0;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .card__kind {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card__time {
+      font-variant-numeric: tabular-nums;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .card__controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .card__btn {
+      padding: 0.4rem 0.85rem;
+      font: inherit;
+      font-size: 0.875rem;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .card__btn:hover { background: #334155; }
+
+    .card__delete {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .card__delete:hover { color: var(--danger); background: rgba(248, 113, 113, 0.1); }
+
+    .card--finished {
+      border-color: var(--finished);
+      background: linear-gradient(180deg, rgba(250, 204, 21, 0.08), var(--panel));
+    }
+
+    .card--finished .card__time {
+      color: var(--finished);
+    }
+
+    @keyframes card-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
+      50%      { box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.35); }
+    }
+
+    .card--pulsing {
+      animation: card-pulse 0.4s ease-in-out 3;
+    }
+
+    @media (max-width: 480px) {
+      .app { margin: 1rem auto; }
+      .app__title { font-size: 1.5rem; }
+      .add__row { flex-direction: column; align-items: stretch; }
+      .add__btn { width: 100%; }
+      .card__time { font-size: 1.75rem; }
+      .card__row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1 class="app__title">Countdown Timer</h1>
+    <p class="app__subtitle">Run multiple timers and date countdowns. Saved in your browser.</p>
+
+    <section class="add" id="add">
+      <div class="add__tabs">
+        <button type="button" class="add__tab" data-tab="duration" aria-pressed="true">Duration</button>
+        <button type="button" class="add__tab" data-tab="target" aria-pressed="false">Target date</button>
+      </div>
+
+      <form class="add__form" id="addForm" autocomplete="off">
+        <div class="pane" id="paneDuration">
+          <div class="add__row">
+            <input type="text" id="durLabel" placeholder="Label (optional)" aria-label="Timer label" maxlength="60" />
+            <input type="text" id="durTime" placeholder="mm:ss, hh:mm:ss, or minutes" aria-label="Duration" />
+            <button type="submit" class="add__btn">Add</button>
+          </div>
+        </div>
+        <div class="pane" id="paneTarget" hidden>
+          <div class="add__row">
+            <input type="text" id="tgtLabel" placeholder="Label (optional)" aria-label="Countdown label" maxlength="60" />
+            <input type="datetime-local" id="tgtWhen" aria-label="Target date and time" />
+            <button type="submit" class="add__btn">Add</button>
+          </div>
+        </div>
+        <p class="add__error" id="addError" role="alert"></p>
+      </form>
+    </section>
+
+    <ul class="list" id="list" aria-live="polite"></ul>
+    <p class="empty" id="empty">No timers yet &mdash; add one above.</p>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'exercise4.timers';
+      var TICK_MS = 250;
+      var MAX_DURATION_MS = 24 * 60 * 60 * 1000;
+
+      var timers = load();
+      var activeTab = 'duration';
+
+      var els = {};
+
+      function load() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) { return []; }
+          var parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(timers));
+      }
+
+      function makeId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+          return window.crypto.randomUUID();
+        }
+        return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+      }
+
+      function formatDuration(ms) {
+        var total = Math.max(0, Math.ceil(ms / 1000));
+        var h = Math.floor(total / 3600);
+        var m = Math.floor((total % 3600) / 60);
+        var s = total % 60;
+        var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+        return h > 0 ? h + ':' + pad(m) + ':' + pad(s) : pad(m) + ':' + pad(s);
+      }
+
+      function formatTarget(ms) {
+        var total = Math.max(0, Math.floor(ms / 1000));
+        var d = Math.floor(total / 86400);
+        var h = Math.floor((total % 86400) / 3600);
+        var m = Math.floor((total % 3600) / 60);
+        var s = total % 60;
+        var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+        return d + 'd ' + pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+      }
+
+      function liveRemaining(t) {
+        if (t.kind === 'duration') {
+          if (t.running && t.lastTickAt != null) {
+            return Math.max(0, t.remainingMs - (Date.now() - t.lastTickAt));
+          }
+          return Math.max(0, t.remainingMs);
+        }
+        return Math.max(0, new Date(t.targetIso).getTime() - Date.now());
+      }
+
+      function renderCard(t) {
+        var li = document.createElement('li');
+        li.className = 'card';
+        if (t.kind === 'duration' && t.remainingMs <= 0 && !t.running) {
+          li.className += ' card--finished';
+        }
+        li.dataset.id = t.id;
+        li.dataset.kind = t.kind;
+
+        var row1 = document.createElement('div');
+        row1.className = 'card__row';
+
+        var label = document.createElement('span');
+        label.className = 'card__label';
+        label.textContent = t.label;
+
+        var kind = document.createElement('span');
+        kind.className = 'card__kind';
+        kind.textContent = t.kind === 'duration' ? 'Timer' : 'Countdown';
+
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'card__delete';
+        del.dataset.action = 'delete';
+        del.setAttribute('aria-label', 'Delete ' + t.label);
+        del.textContent = '×';
+
+        row1.appendChild(label);
+        row1.appendChild(kind);
+        row1.appendChild(del);
+
+        var time = document.createElement('div');
+        time.className = 'card__time';
+        time.dataset.role = 'time';
+        time.textContent = t.kind === 'duration'
+          ? formatDuration(liveRemaining(t))
+          : formatTarget(liveRemaining(t));
+
+        li.appendChild(row1);
+        li.appendChild(time);
+
+        if (t.kind === 'duration') {
+          var controls = document.createElement('div');
+          controls.className = 'card__controls';
+
+          // Finished cards show only Reset (per spec card anatomy table).
+          var isFinished = t.remainingMs <= 0 && !t.running;
+          if (!isFinished) {
+            var primary = document.createElement('button');
+            primary.type = 'button';
+            primary.className = 'card__btn';
+            if (t.running) {
+              primary.dataset.action = 'pause';
+              primary.textContent = 'Pause';
+            } else {
+              primary.dataset.action = 'resume';
+              primary.textContent = t.remainingMs === t.durationMs ? 'Start' : 'Resume';
+            }
+            controls.appendChild(primary);
+          }
+
+          var reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className = 'card__btn';
+          reset.dataset.action = 'reset';
+          reset.textContent = 'Reset';
+
+          controls.appendChild(reset);
+          li.appendChild(controls);
+        }
+
+        return li;
+      }
+
+      // Full re-render of the card list. Call ONLY on add/delete/pause/resume/reset/finish —
+      // never inside tick(), which mutates time-display text in place to keep DOM stable.
+      function render() {
+        els.list.innerHTML = '';
+        timers.forEach(function (t) {
+          els.list.appendChild(renderCard(t));
+        });
+        els.empty.hidden = timers.length > 0;
+      }
+
+      function tick() {
+        var nodes = els.list.querySelectorAll('.card');
+        var finished = [];
+        nodes.forEach(function (node) {
+          var id = node.dataset.id;
+          var t = findTimer(id);
+          if (!t) { return; }
+
+          var ms = liveRemaining(t);
+
+          // Detect first-zero crossing for running duration timers.
+          if (t.kind === 'duration' && t.running && ms <= 0) {
+            t.running = false;
+            t.remainingMs = 0;
+            t.lastTickAt = null;
+            finished.push(t);
+            ms = 0;
+          }
+
+          var text = t.kind === 'duration' ? formatDuration(ms) : formatTarget(ms);
+          var timeEl = node.querySelector('[data-role="time"]');
+          if (timeEl && timeEl.textContent !== text) {
+            timeEl.textContent = text;
+          }
+        });
+        if (finished.length > 0) {
+          save();
+          render(); // refreshes button labels (Pause → Start) and adds .card--finished
+          // Fire alerts AFTER render so flashCard can target the freshly-rendered DOM node.
+          setTimeout(function () {
+            finished.forEach(fireFinish);
+          }, 0);
+        }
+      }
+
+      function setTab(name) {
+        activeTab = name;
+        document.querySelectorAll('.add__tab').forEach(function (b) {
+          b.setAttribute('aria-pressed', b.dataset.tab === name ? 'true' : 'false');
+        });
+        els.paneDuration.hidden = name !== 'duration';
+        els.paneTarget.hidden = name !== 'target';
+        els.error.textContent = '';
+      }
+
+      function parseDuration(raw) {
+        var s = (raw || '').trim();
+        if (!s) { return null; }
+
+        // Plain number → minutes
+        if (/^\d+(\.\d+)?$/.test(s)) {
+          var mins = parseFloat(s);
+          return mins > 0 ? Math.round(mins * 60 * 1000) : null;
+        }
+
+        // mm:ss or hh:mm:ss
+        var parts = s.split(':');
+        if (parts.length < 2 || parts.length > 3) { return null; }
+        for (var i = 0; i < parts.length; i++) {
+          if (!/^\d+$/.test(parts[i])) { return null; }
+        }
+        var nums = parts.map(function (p) { return parseInt(p, 10); });
+        var ms;
+        if (nums.length === 2) {
+          if (nums[1] >= 60) { return null; }
+          ms = (nums[0] * 60 + nums[1]) * 1000;
+        } else {
+          if (nums[1] >= 60 || nums[2] >= 60) { return null; }
+          ms = (nums[0] * 3600 + nums[1] * 60 + nums[2]) * 1000;
+        }
+        return ms > 0 ? ms : null;
+      }
+
+      function addDuration(rawLabel, rawTime) {
+        var ms = parseDuration(rawTime);
+        if (ms == null) {
+          els.error.textContent = 'Enter a duration like 5:00, 1:30:00, or 5 (minutes).';
+          return false;
+        }
+        if (ms > MAX_DURATION_MS) {
+          els.error.textContent = 'Maximum duration is 24 hours.';
+          return false;
+        }
+        var label = (rawLabel || '').trim().slice(0, 60) || 'Timer';
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+          try { Notification.requestPermission(); } catch (e) { /* silent */ }
+        }
+        timers.unshift({
+          id: makeId(),
+          kind: 'duration',
+          label: label,
+          durationMs: ms,
+          remainingMs: ms,
+          running: false,
+          lastTickAt: null
+        });
+        save();
+        render();
+        els.error.textContent = '';
+        return true;
+      }
+
+      function addTarget(rawLabel, rawWhen) {
+        if (!rawWhen) {
+          els.error.textContent = 'Pick a date and time.';
+          return false;
+        }
+        var d = new Date(rawWhen);
+        if (isNaN(d.getTime())) {
+          els.error.textContent = 'Could not parse that date.';
+          return false;
+        }
+        if (d.getTime() <= Date.now()) {
+          els.error.textContent = 'Pick a date in the future.';
+          return false;
+        }
+        var label = (rawLabel || '').trim().slice(0, 60) || 'Countdown';
+        timers.unshift({
+          id: makeId(),
+          kind: 'target',
+          label: label,
+          targetIso: d.toISOString()
+        });
+        save();
+        render();
+        els.error.textContent = '';
+        return true;
+      }
+
+      function findTimer(id) {
+        for (var i = 0; i < timers.length; i++) {
+          if (timers[i].id === id) { return timers[i]; }
+        }
+        return null;
+      }
+
+      function startOrResume(id) {
+        var t = findTimer(id);
+        if (!t || t.kind !== 'duration') { return; }
+        if (t.running) { return; }
+        if (t.remainingMs <= 0) { return; }
+        t.running = true;
+        t.lastTickAt = Date.now();
+        save();
+        render();
+      }
+
+      function pause(id) {
+        var t = findTimer(id);
+        if (!t || t.kind !== 'duration') { return; }
+        if (!t.running) { return; }
+        t.remainingMs = Math.max(0, t.remainingMs - (Date.now() - t.lastTickAt));
+        t.running = false;
+        t.lastTickAt = null;
+        save();
+        render();
+      }
+
+      function reset(id) {
+        var t = findTimer(id);
+        if (!t || t.kind !== 'duration') { return; }
+        t.running = false;
+        t.lastTickAt = null;
+        t.remainingMs = t.durationMs;
+        save();
+        render();
+      }
+
+      function removeTimer(id) {
+        timers = timers.filter(function (t) { return t.id !== id; });
+        save();
+        render();
+      }
+
+      function reconcileOnLoad() {
+        var fired = [];
+        var changed = false;
+        timers.forEach(function (t) {
+          if (t.kind !== 'duration') { return; }
+          if (!t.running || t.lastTickAt == null) { return; }
+          var live = t.remainingMs - (Date.now() - t.lastTickAt);
+          if (live <= 0) {
+            t.running = false;
+            t.remainingMs = 0;
+            t.lastTickAt = null;
+            fired.push(t);
+            changed = true;
+          }
+        });
+        if (changed) { save(); }
+        // Defer alerts until after the first render so flashCard can find the DOM nodes.
+        if (fired.length > 0) {
+          setTimeout(function () {
+            fired.forEach(fireFinish);
+          }, 0);
+        }
+      }
+
+      var audioCtx = null;
+
+      function beep() {
+        try {
+          if (!audioCtx) {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) { return; }
+            audioCtx = new Ctx();
+          }
+          var now = audioCtx.currentTime;
+          for (var i = 0; i < 3; i++) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = 880;
+            var start = now + i * 0.4;
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(0.25, start + 0.02);
+            gain.gain.linearRampToValueAtTime(0, start + 0.25);
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(start);
+            osc.stop(start + 0.3);
+          }
+        } catch (e) { /* silent */ }
+      }
+
+      function flashCard(id) {
+        var node = els.list.querySelector('.card[data-id="' + id + '"]');
+        if (!node) { return; }
+        node.classList.add('card--pulsing');
+        setTimeout(function () {
+          if (node.parentNode) { node.classList.remove('card--pulsing'); }
+        }, 1400);
+      }
+
+      function notify(label) {
+        try {
+          if (typeof Notification === 'undefined') { return; }
+          if (Notification.permission !== 'granted') { return; }
+          new Notification('Timer done', { body: label });
+        } catch (e) { /* silent */ }
+      }
+
+      function fireFinish(t) {
+        beep();
+        flashCard(t.id);
+        notify(t.label);
+      }
+
+      function init() {
+        els.list = document.getElementById('list');
+        els.empty = document.getElementById('empty');
+        els.form = document.getElementById('addForm');
+        els.error = document.getElementById('addError');
+        els.paneDuration = document.getElementById('paneDuration');
+        els.paneTarget = document.getElementById('paneTarget');
+
+        document.querySelectorAll('.add__tab').forEach(function (b) {
+          b.addEventListener('click', function () { setTab(b.dataset.tab); });
+        });
+
+        els.form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (activeTab === 'duration') {
+            var labelEl = document.getElementById('durLabel');
+            var timeEl = document.getElementById('durTime');
+            if (addDuration(labelEl.value, timeEl.value)) {
+              labelEl.value = '';
+              timeEl.value = '';
+              timeEl.focus();
+            }
+          }
+          if (activeTab === 'target') {
+            var tLabelEl = document.getElementById('tgtLabel');
+            var tWhenEl = document.getElementById('tgtWhen');
+            if (addTarget(tLabelEl.value, tWhenEl.value)) {
+              tLabelEl.value = '';
+              tWhenEl.value = '';
+            }
+          }
+        });
+
+        els.list.addEventListener('click', function (e) {
+          var btn = e.target.closest('button[data-action]');
+          if (!btn) { return; }
+          var card = btn.closest('.card');
+          if (!card) { return; }
+          var id = card.dataset.id;
+          var action = btn.dataset.action;
+          if (action === 'resume') { startOrResume(id); }
+          else if (action === 'pause') { pause(id); }
+          else if (action === 'reset') { reset(id); }
+          else if (action === 'delete') { removeTimer(id); }
+        });
+
+        reconcileOnLoad();
+        render();
+        setInterval(tick, TICK_MS);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
