@@ -48,7 +48,60 @@
 }
 
 .wrap {
+  position: relative;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
+  padding: 1.75rem 2rem 3.5rem;
+  isolation: isolate;
+}
+
+/* Bookshelf side panels — left + right vertical wood frames */
+.wrap::before,
+.wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  z-index: -1;
+  background:
+    /* Vertical grain on the side panel face */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.09) 3px,
+      rgba(0, 0, 0, 0.09) 4px
+    ),
+    /* Knot variation along the panel */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      rgba(255, 235, 200, 0.05) 60px,
+      transparent 120px
+    ),
+    /* Slightly darker frame wood than the back */
+    linear-gradient(180deg, #a0723a 0%, #6e4220 100%);
+}
+
+.wrap::before {
+  left: 0;
+  /* Inside-edge shadow falling onto the back panel */
+  box-shadow:
+    /* Bright outer-front edge highlight (light catching the panel) */
+    inset -1px 0 0 rgba(0, 0, 0, 0.35),
+    inset 1px 0 0 rgba(255, 235, 200, 0.18),
+    /* Cast shadow into the bookshelf interior */
+    2px 0 6px rgba(0, 0, 0, 0.32),
+    /* Outer hairline against the wall behind */
+    -1px 0 0 rgba(0, 0, 0, 0.4);
+}
+
+.wrap::after {
+  right: 0;
+  box-shadow:
+    inset 1px 0 0 rgba(0, 0, 0, 0.35),
+    inset -1px 0 0 rgba(255, 235, 200, 0.18),
+    -2px 0 6px rgba(0, 0, 0, 0.32),
+    1px 0 0 rgba(0, 0, 0, 0.4);
 }
