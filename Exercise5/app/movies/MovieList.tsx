@@ -134,6 +134,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
               key={m.id}
               className={styles.card}
               onClick={() => setEditing(m)}
+              title={m.overview ?? undefined}
             >
               <div className={styles.cardPoster}>
                 <PosterImage
@@ -188,6 +189,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
                   {m.year !== null && <span className={styles.year}>({m.year})</span>}
                   {m.watched_on && <span className={styles.date}>{m.watched_on}</span>}
                 </div>
+                {m.overview && <p className={styles.overview}>{m.overview}</p>}
                 {m.notes && <p className={styles.notes}>“{m.notes}”</p>}
               </div>
               <div className={styles.rowActions}>

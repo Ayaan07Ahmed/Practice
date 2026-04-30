@@ -149,6 +149,17 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
       </fieldset>
 
       <label className={styles.field}>
+        <span>Description <em>auto-filled from TMDB, editable</em></span>
+        <textarea
+          maxLength={4000}
+          rows={3}
+          value={overview ?? ""}
+          onChange={(e) => setOverview(e.target.value === "" ? null : e.target.value)}
+          placeholder="Pick a TMDB suggestion to auto-fill, or type your own."
+        />
+      </label>
+
+      <label className={styles.field}>
         <span>Notes</span>
         <textarea
           maxLength={2000}
