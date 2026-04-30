@@ -11,23 +11,28 @@
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f3 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
   padding: 1.75rem;
-  box-shadow: var(--shadow);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 16px 40px -12px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .title {
   margin: 0;
-  font-size: 1.35rem;
-  letter-spacing: 0.01em;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--accent);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-shadow: var(--text-emboss-light);
 }
 
 .subtitle {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.25rem;
   color: var(--text-dim);
   font-size: 0.95rem;
 }
@@ -39,7 +44,11 @@
   font-size: 0.9rem;
   color: var(--text-dim);
 }
-.field span { font-weight: 500; }
+.field span {
+  font-weight: 600;
+  color: var(--text);
+  text-shadow: var(--text-emboss-light);
+}
 
 .hint {
   margin: 0.25rem 0 0;

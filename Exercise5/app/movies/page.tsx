@@ -24,22 +24,25 @@ export default async function MoviesPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className={styles.wrap}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>🎬 Movie Tracker</h1>
-        <div className={styles.userBar}>
-          <span className={styles.email}>{displayName}</span>
-          <form action="/auth/signout" method="post">
-            <button type="submit">Sign out</button>
-          </form>
+    <>
+      <header className={styles.navBar}>
+        <div className={styles.navBarInner}>
+          <h1 className={styles.title}>🎬 Movie Tracker</h1>
+          <div className={styles.userBar}>
+            <span className={styles.userName}>{displayName}</span>
+            <form action="/auth/signout" method="post">
+              <button type="submit">Sign out</button>
+            </form>
+          </div>
         </div>
       </header>
-
-      {error ? (
-        <div className="error">Failed to load movies: {error.message}</div>
-      ) : (
-        <MovieList initialMovies={(data ?? []) as Movie[]} />
-      )}
-    </main>
+      <main className={styles.wrap}>
+        {error ? (
+          <div className="error">Failed to load movies: {error.message}</div>
+        ) : (
+          <MovieList initialMovies={(data ?? []) as Movie[]} />
+        )}
+      </main>
+    </>
   );
 }

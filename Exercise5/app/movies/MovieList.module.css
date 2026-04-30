@@ -7,9 +7,16 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.6rem;
   align-items: center;
   justify-content: space-between;
+  padding: 0.75rem;
+  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    var(--shadow-sm);
 }
 
 .controls {
@@ -44,15 +51,20 @@
   gap: 1rem;
   align-items: flex-start;
   padding: 0.875rem 1rem;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #f1f1f4 100%);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    var(--shadow-sm);
+  transition: filter 120ms ease, transform 120ms ease, box-shadow 120ms ease;
 }
 .row:hover {
+  filter: brightness(1.02);
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px -8px rgba(31, 45, 28, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 6px 14px -6px rgba(0, 0, 0, 0.28);
 }
 
 .rowMain {
@@ -70,6 +82,7 @@
 .rowTitle {
   font-size: 1rem;
   word-break: break-word;
+  text-shadow: var(--text-emboss-light);
 }
 
 .year {
@@ -98,13 +111,22 @@
   flex-shrink: 0;
 }
 
+/* Gold gradient star ratings — iTunes-style */
 .stars {
   letter-spacing: 0.04em;
-  color: var(--warn);
   font-size: 0.95rem;
   white-space: nowrap;
+  background: linear-gradient(180deg, var(--gold-top) 0%, var(--gold-bottom) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.2));
 }
-.starsDim { color: rgba(212, 160, 23, 0.22); }
+.starsDim {
+  background: none;
+  -webkit-text-fill-color: var(--gold-dim);
+  color: var(--gold-dim);
+}
 
 .empty {
   color: var(--text-dim);
@@ -113,8 +135,8 @@
 }
 
 .emptyCard {
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   padding: 2.5rem 1.5rem;
   text-align: center;
@@ -122,19 +144,28 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  box-shadow: var(--shadow);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    var(--shadow);
 }
-.emptyCard h2 { margin: 0; font-size: 1.15rem; }
+.emptyCard h2 { margin: 0; font-size: 1.15rem; text-shadow: var(--text-emboss-light); }
 .emptyCard p { margin: 0; color: var(--text-dim); }
 
 .thumbInRow {
   flex-shrink: 0;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.1rem;
   padding: 0;
   list-style: none;
   margin: 0;
@@ -149,26 +180,34 @@
 
 .card {
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-sm);
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    var(--shadow-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
 }
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px -10px rgba(31, 45, 28, 0.32);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 12px 24px -10px rgba(0, 0, 0, 0.4);
 }
 
 .cardPoster {
   position: relative;
   width: 100%;
   aspect-ratio: 2 / 3;
-  background: var(--panel-tint);
+  background: #1c1c1e;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
 .cardPoster img,
 .cardPoster > div {
@@ -177,17 +216,23 @@
   border-radius: 0 !important;
 }
 
+/* Black glossy rating pill — iOS 6 player overlay style */
 .cardRating {
   position: absolute;
-  right: 0.4rem;
-  bottom: 0.4rem;
-  background: rgba(31, 45, 28, 0.78);
-  color: #fcd34d;
-  padding: 0.2rem 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  background: linear-gradient(180deg, rgba(60, 60, 60, 0.92) 0%, rgba(20, 20, 20, 0.94) 100%);
+  color: var(--gold-top);
+  padding: 0.28rem 0.6rem;
   border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.4);
   font-size: 0.85rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 }
 
 .cardBody {
@@ -202,6 +247,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: var(--text-emboss-light);
 }
 .cardYear {
   color: var(--text-dim);
@@ -211,15 +257,12 @@
 
 .cardDelete {
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--danger);
-  border: 1px solid rgba(230, 57, 70, 0.35);
-  width: 28px;
-  height: 28px;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   line-height: 1;
   padding: 0;
   display: grid;
@@ -229,4 +272,3 @@
 }
 .card:hover .cardDelete,
 .card:focus-within .cardDelete { opacity: 1; }
-.cardDelete:hover { background: #ffe4e6; }
