@@ -13,6 +13,7 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,15 +30,46 @@ export default function SignupPage() {
 
     setSubmitting(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
     if (error) {
       setError(error.message);
       setSubmitting(false);
       return;
     }
-    // Email confirmation is disabled in v1, so a session is created immediately.
-    router.push("/movies");
-    router.refresh();
+
+    // If a session came back, email confirmation is disabled — sign-in
+    // worked immediately. Otherwise we wait for the user to click the
+    // confirmation link in their inbox.
+    if (data.session) {
+      router.push("/movies");
+      router.refresh();
+    } else {
+      setConfirmationSent(true);
+      setSubmitting(false);
+    }
+  }
+
+  if (confirmationSent) {
+    return (
+      <main className={styles.wrap}>
+        <div className={styles.card}>
+          <h1 className={styles.title}>🎬 Movie Tracker</h1>
+          <p className={styles.subtitle}>Check your email</p>
+          <p style={{ color: "var(--text-dim)", fontSize: "0.95rem", lineHeight: 1.5 }}>
+            We sent a confirmation link to <strong>{email}</strong>. Click it to finish creating your account, then come back and sign in.
+          </p>
+          <p className={styles.hint}>
+            <Link href="/login">Back to sign in</Link>
+          </p>
+        </div>
+      </main>
+    );
   }
 
   return (

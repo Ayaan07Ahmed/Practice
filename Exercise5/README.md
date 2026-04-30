@@ -50,9 +50,17 @@ If you set up the project before TMDB integration was added, paste the contents 
 
 If you only have a v3 short-string key, the search action's `Authorization: Bearer …` line in [`app/movies/tmdb.ts`](./app/movies/tmdb.ts) needs to change to a `?api_key=…` query parameter instead.
 
-### 4. Disable email confirmation (v1)
+### 4. Email confirmation + redirect URLs
 
-In the Supabase dashboard, **Authentication → Providers → Email**, turn **Confirm email** off. This lets new accounts sign in immediately without an inbox round-trip. (Re-enable it for any real deployment.)
+In the Supabase dashboard:
+
+1. **Authentication → Providers → Email** → keep **Confirm email** **on** (default). New signups get a verification email with a link that posts back to `/auth/callback` in the app.
+2. **Authentication → URL Configuration → Site URL** → set to your deployed origin (e.g. `https://your-app.vercel.app`). For local-only use, `http://localhost:3000` is fine.
+3. **Authentication → URL Configuration → Redirect URLs** → add both:
+   - `http://localhost:3000/auth/callback`
+   - `https://<your-vercel-url>/auth/callback` (if deployed)
+
+If you want signups to skip confirmation during early local development, you can flip "Confirm email" off — new accounts will then sign in immediately.
 
 ### 5. Start the dev server
 
