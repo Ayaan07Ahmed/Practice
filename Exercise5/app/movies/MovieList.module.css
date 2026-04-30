@@ -11,12 +11,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    var(--shadow-sm);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.35);
 }
 
 .controls {
@@ -51,20 +51,20 @@
   gap: 1rem;
   align-items: flex-start;
   padding: 0.875rem 1rem;
-  background: linear-gradient(180deg, #ffffff 0%, #f1f1f4 100%);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    var(--shadow-sm);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.4);
   transition: filter 120ms ease, transform 120ms ease, box-shadow 120ms ease;
 }
 .row:hover {
-  filter: brightness(1.02);
+  filter: brightness(1.03);
   transform: translateY(-1px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 6px 14px -6px rgba(0, 0, 0, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 16px rgba(0, 0, 0, 0.45);
 }
 
 .rowMain {
@@ -135,7 +135,7 @@
 }
 
 .emptyCard {
-  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   padding: 2.5rem 1.5rem;
@@ -145,8 +145,8 @@
   align-items: center;
   gap: 0.75rem;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    var(--shadow);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 16px rgba(0, 0, 0, 0.45);
 }
 .emptyCard h2 { margin: 0; font-size: 1.15rem; text-shadow: var(--text-emboss-light); }
 .emptyCard p { margin: 0; color: var(--text-dim); }
@@ -165,39 +165,49 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.1rem;
-  padding: 0;
+  column-gap: 1.4rem;
+  row-gap: 2rem;
+  padding: 0.5rem 0 1rem;
   list-style: none;
   margin: 0;
 }
 
 @media (max-width: 720px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: repeat(2, 1fr); column-gap: 1.1rem; row-gap: 1.5rem; }
 }
 @media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr; row-gap: 1.25rem; }
 }
 
+/* DVD/Blu-ray case standing on the shelf */
 .card {
   position: relative;
-  background: linear-gradient(180deg, #ffffff 0%, #ebebef 100%);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fdfcf6 0%, #d9d4c4 100%);
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  border-radius: 3px;
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    var(--shadow-sm);
-  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+    /* Spine highlight on the left edge — like the lip of a clear case */
+    inset 1px 0 0 rgba(255, 255, 255, 0.85),
+    /* Subtle inner ring */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+    /* Heavy contact shadow with the shelf */
+    0 8px 10px -4px rgba(0, 0, 0, 0.55),
+    /* Soft ambient */
+    0 2px 4px rgba(0, 0, 0, 0.35);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
 }
 .card:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
+  transform: translateY(-4px);
+  filter: brightness(1.04);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 12px 24px -10px rgba(0, 0, 0, 0.4);
+    inset 1px 0 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 16px 22px -6px rgba(0, 0, 0, 0.55),
+    0 6px 10px rgba(0, 0, 0, 0.35);
 }
 
 .cardPoster {
@@ -205,8 +215,9 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   background: #1c1c1e;
+  /* Inner gloss + thin dark frame to feel like artwork under the case plastic */
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
     inset 0 0 0 2px rgba(0, 0, 0, 0.55);
 }
 .cardPoster img,
@@ -214,6 +225,21 @@
   width: 100% !important;
   height: 100% !important;
   border-radius: 0 !important;
+}
+/* Subtle vertical gloss on the cover — like cellophane shrinkwrap */
+.cardPoster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(255, 255, 255, 0.10) 45%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
 }
 
 /* Black glossy rating pill — iOS 6 player overlay style */
@@ -236,14 +262,18 @@
 }
 
 .cardBody {
-  padding: 0.65rem 0.75rem 0.85rem;
+  /* Bottom case label / shelf-tag */
+  padding: 0.55rem 0.7rem 0.7rem;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
   min-width: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(0, 0, 0, 0.04) 100%);
 }
 .cardTitle {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.92rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -251,7 +281,7 @@
 }
 .cardYear {
   color: var(--text-dim);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
 }
 

@@ -1,12 +1,15 @@
 :root {
-  /* Brushed-metal page background */
-  --bg-top: #e8e8eb;
-  --bg-bottom: #c7c8cc;
+  /* Walnut wood-shelf page background */
+  --wood-top: #8b5a2b;
+  --wood-bottom: #4a2811;
+  --wood-grain: rgba(0, 0, 0, 0.06);
+  --wood-grain-strong: rgba(0, 0, 0, 0.12);
+  --wood-highlight: rgba(255, 220, 180, 0.10);
 
-  /* Panels */
-  --panel: #ffffff;
-  --panel-tint: #f5f5f7;
-  --panel-2: #efeff2;
+  /* Panels — aged-cream "library card" feel */
+  --panel: #f9f6ee;
+  --panel-tint: #f3eee2;
+  --panel-2: #ece6d4;
 
   /* Text */
   --text: #1c1c1e;
@@ -83,14 +86,24 @@ html { color-scheme: light; }
 body {
   min-height: 100vh;
   background:
+    radial-gradient(ellipse at 22% 8%, var(--wood-highlight), transparent 55%),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0) 0,
-      rgba(255, 255, 255, 0) 2px,
-      rgba(255, 255, 255, 0.06) 2px,
-      rgba(255, 255, 255, 0.06) 3px
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 1px,
+      var(--wood-grain) 1px,
+      var(--wood-grain) 2px
     ),
-    linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 6px,
+      var(--wood-grain-strong) 6px,
+      var(--wood-grain-strong) 7px,
+      rgba(0, 0, 0, 0) 7px,
+      rgba(0, 0, 0, 0) 14px
+    ),
+    linear-gradient(180deg, var(--wood-top) 0%, var(--wood-bottom) 100%);
   background-attachment: fixed;
 }
 

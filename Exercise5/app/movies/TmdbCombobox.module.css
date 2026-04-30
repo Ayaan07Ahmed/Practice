@@ -26,12 +26,12 @@
   left: 0;
   right: 0;
   z-index: 20;
-  background: linear-gradient(180deg, #ffffff 0%, #f3f3f5 100%);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    var(--shadow);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 10px 20px rgba(0, 0, 0, 0.5);
   list-style: none;
   margin: 0;
   padding: 0.25rem 0;
