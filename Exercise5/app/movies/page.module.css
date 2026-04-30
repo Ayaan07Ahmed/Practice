@@ -15,8 +15,11 @@
 
 .title {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   letter-spacing: 0.01em;
+  font-weight: 700;
+  color: var(--text);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .userBar {
@@ -27,5 +30,10 @@
 }
 
 .email {
-  color: var(--text-dim);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  backdrop-filter: blur(6px);
 }

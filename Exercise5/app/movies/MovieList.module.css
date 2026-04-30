@@ -47,6 +47,12 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -8px rgba(31, 45, 28, 0.28);
 }
 
 .rowMain {
@@ -98,7 +104,7 @@
   font-size: 0.95rem;
   white-space: nowrap;
 }
-.starsDim { color: rgba(250, 204, 21, 0.25); }
+.starsDim { color: rgba(212, 160, 23, 0.22); }
 
 .empty {
   color: var(--text-dim);
@@ -116,6 +122,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  box-shadow: var(--shadow);
 }
 .emptyCard h2 { margin: 0; font-size: 1.15rem; }
 .emptyCard p { margin: 0; color: var(--text-dim); }
