@@ -166,48 +166,78 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 1.4rem;
-  row-gap: 2rem;
-  padding: 0.5rem 0 1rem;
+  row-gap: 2.5rem;
+  padding: 0.5rem 0 1.5rem;
   list-style: none;
   margin: 0;
+  isolation: isolate;
 }
 
 @media (max-width: 720px) {
-  .grid { grid-template-columns: repeat(2, 1fr); column-gap: 1.1rem; row-gap: 1.5rem; }
+  .grid { grid-template-columns: repeat(2, 1fr); column-gap: 1.1rem; row-gap: 2rem; }
 }
 @media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr; row-gap: 1.25rem; }
+  .grid { grid-template-columns: 1fr; row-gap: 1.5rem; }
 }
 
-/* DVD/Blu-ray case standing on the shelf */
+/* DVD/Blu-ray case standing on a wooden shelf */
 .card {
   position: relative;
   background: linear-gradient(180deg, #fdfcf6 0%, #d9d4c4 100%);
-  border: 1px solid rgba(0, 0, 0, 0.55);
-  border-radius: 3px;
-  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   box-shadow:
-    /* Spine highlight on the left edge — like the lip of a clear case */
-    inset 1px 0 0 rgba(255, 255, 255, 0.85),
-    /* Subtle inner ring */
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
-    /* Heavy contact shadow with the shelf */
-    0 8px 10px -4px rgba(0, 0, 0, 0.55),
+    /* Outer-left chrome lip of the clear case */
+    inset 1px 0 0 rgba(255, 255, 255, 0.9),
+    /* Heavy contact shadow with shelf */
+    0 8px 10px -3px rgba(0, 0, 0, 0.55),
     /* Soft ambient */
     0 2px 4px rgba(0, 0, 0, 0.35);
   transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
 }
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   filter: brightness(1.04);
   box-shadow:
-    inset 1px 0 0 rgba(255, 255, 255, 0.9),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-    0 16px 22px -6px rgba(0, 0, 0, 0.55),
+    inset 1px 0 0 rgba(255, 255, 255, 0.95),
+    0 18px 24px -6px rgba(0, 0, 0, 0.55),
     0 6px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Wooden shelf strip under each DVD — extends past card edges to bridge with neighbors */
+.card::after {
+  content: "";
+  position: absolute;
+  left: calc(-0.7rem - 1px);
+  right: calc(-0.7rem - 1px);
+  bottom: -1.3rem;
+  height: 12px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.06) 2px,
+      rgba(0, 0, 0, 0.06) 3px
+    ),
+    linear-gradient(180deg, #5a3318 0%, #3a1f0b 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow:
+    /* Top edge of shelf catches light */
+    inset 0 1px 0 rgba(255, 220, 180, 0.4),
+    /* Cards casting shadow onto shelf */
+    inset 0 4px 5px -3px rgba(0, 0, 0, 0.55),
+    /* Shelf casting its own shadow on the wood wall below */
+    0 3px 4px rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+/* Counter-translate the shelf so it stays planted when card lifts on hover */
+.card:hover::after {
+  transform: translateY(5px);
 }
 
 .cardPoster {
@@ -215,10 +245,10 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   background: #1c1c1e;
-  /* Inner gloss + thin dark frame to feel like artwork under the case plastic */
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
-    inset 0 0 0 2px rgba(0, 0, 0, 0.55);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 .cardPoster img,
 .cardPoster > div {
@@ -226,20 +256,42 @@
   height: 100% !important;
   border-radius: 0 !important;
 }
-/* Subtle vertical gloss on the cover — like cellophane shrinkwrap */
+
+/* DVD spine wrap on the left edge — darker strip suggesting the cover art continues onto the spine */
+.cardPoster::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 7px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.25) 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+/* Cellophane shrinkwrap diagonal gloss across the cover */
 .cardPoster::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    100deg,
+    105deg,
     rgba(255, 255, 255, 0) 0%,
     rgba(255, 255, 255, 0) 38%,
-    rgba(255, 255, 255, 0.10) 45%,
-    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(255, 255, 255, 0.05) 55%,
+    rgba(255, 255, 255, 0) 65%,
     rgba(255, 255, 255, 0) 100%
   );
   pointer-events: none;
+  z-index: 3;
 }
 
 /* Black glossy rating pill — iOS 6 player overlay style */
@@ -262,14 +314,15 @@
 }
 
 .cardBody {
-  /* Bottom case label / shelf-tag */
-  padding: 0.55rem 0.7rem 0.7rem;
+  /* Bottom case label */
+  padding: 0.5rem 0.65rem 0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
   min-width: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.25);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(0, 0, 0, 0.04) 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(0, 0, 0, 0.06) 100%);
 }
 .cardTitle {
   font-weight: 700;
