@@ -33,6 +33,23 @@ npm install
 
 In the Supabase dashboard, open **SQL Editor → New query**, paste the contents of [`supabase/schema.sql`](./supabase/schema.sql), and click **Run**. This creates the `movies` table, indexes, and RLS policies.
 
+### 3a. Apply the TMDB migration (existing projects only)
+
+If you set up the project before TMDB integration was added, paste the contents of [`supabase/migrations/2026-04-30-tmdb.sql`](./supabase/migrations/2026-04-30-tmdb.sql) into the Supabase SQL Editor and run it. Fresh projects from `schema.sql` already have the new columns.
+
+### 3b. Get a TMDB API key
+
+1. Sign up at https://www.themoviedb.org/signup
+2. **Settings → API** → request a Developer key (free, instant for personal use)
+3. Copy the **API Read Access Token** (the long JWT-style v4 token, starts with `eyJ`)
+4. Add it to `.env.local`:
+
+   ```
+   TMDB_API_KEY=<paste-token-here>
+   ```
+
+If you only have a v3 short-string key, the search action's `Authorization: Bearer …` line in [`app/movies/tmdb.ts`](./app/movies/tmdb.ts) needs to change to a `?api_key=…` query parameter instead.
+
 ### 4. Disable email confirmation (v1)
 
 In the Supabase dashboard, **Authentication → Providers → Email**, turn **Confirm email** off. This lets new accounts sign in immediately without an inbox round-trip. (Re-enable it for any real deployment.)
@@ -58,7 +75,13 @@ Open http://localhost:3000 — you'll be redirected to `/login`.
 | `app/movies/MovieList.tsx`                   | Client Component — search / sort / filter UI             |
 | `app/movies/MovieForm.tsx`                   | Client Component — add / edit form                       |
 | `app/movies/actions.ts`                      | Server Actions — `createMovie`, `updateMovie`, `deleteMovie` |
+| `app/movies/PosterImage.tsx`                 | `next/image` wrapper with sage placeholder fallback     |
+| `app/movies/TmdbCombobox.tsx`                | Type-ahead dropdown for the title field                 |
+| `app/movies/ViewToggle.tsx`                  | List/grid toggle                                        |
+| `app/movies/poster.ts`                       | Build TMDB image CDN URLs                               |
+| `app/movies/tmdb.ts`                         | Server Action — search TMDB                             |
 | `app/movies/types.ts`                        | Shared `Movie` / `MovieInput` types                      |
+| `supabase/migrations/2026-04-30-tmdb.sql`    | Adds `tmdb_id`/`poster_path`/`overview` columns         |
 | `supabase/schema.sql`                        | DDL + RLS policies                                       |
 
 ## Scripts
@@ -83,6 +106,14 @@ After setup, exercise these flows:
 8. Sign out → `/login` again, `/movies` blocked.
 9. Sign in, hard-refresh `/movies` → list persists (cookie session).
 10. `npm run lint` clean, `npm run build` succeeds.
+
+### TMDB verification
+
+11. **Type-ahead:** add a movie, type "Dune" — within ~500ms a dropdown shows ≥ 2 results with thumbnails. Click "Dune: Part Two" → title and year fill. Save → row appears in list with a real poster.
+12. **Manual entry:** type "asdfqwer" → dropdown shows "No suggestions" or only the manual fallback row → save → row stores with sage placeholder.
+13. **Bad key:** set `TMDB_API_KEY=invalid` and restart dev server → typing in the title field shows "TMDB key not configured" inline; manual entry still works.
+14. **View toggle:** click ▦ Grid → poster cards. Reload → grid persists. Resize 1024 → 600 → 400 → columns go 3 → 2 → 1.
+15. **Mismatch protection:** select a TMDB result, then type extra characters in the title → metadata clears (verify by saving and looking at the row — no poster).
 
 ## Notes
 

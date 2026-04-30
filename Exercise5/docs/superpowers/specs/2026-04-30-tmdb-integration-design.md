@@ -1,5 +1,7 @@
 # TMDB Integration — Design Spec
 
+**Status:** Implemented 2026-04-30. Plan: [`../plans/2026-04-30-tmdb-integration.md`](../plans/2026-04-30-tmdb-integration.md).
+
 ## Context
 
 Exercise5 (movie tracker, Next.js 16 + Supabase) shipped with the v1 features specified in `2026-04-30-movie-tracker-design.md`: auth, CRUD, search/sort/filter, RLS-protected `movies` table. The "out of scope" list flagged TMDB poster lookup as a v2 enhancement, and the user has chosen it as the next iteration.
