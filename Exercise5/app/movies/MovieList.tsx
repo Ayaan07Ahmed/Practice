@@ -4,14 +4,27 @@ import { useMemo, useState, useTransition } from "react";
 import type { Movie } from "./types";
 import { deleteMovie } from "./actions";
 import MovieForm from "./MovieForm";
+import PosterImage from "./PosterImage";
+import ViewToggle, { type ViewMode } from "./ViewToggle";
 import styles from "./MovieList.module.css";
 
 type SortKey = "watched_desc" | "rating_desc" | "title_asc";
+
+const VIEW_KEY = "movie-tracker.viewMode";
 
 export default function MovieList({ initialMovies }: { initialMovies: Movie[] }) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("watched_desc");
   const [minRating, setMinRating] = useState<number>(0);
+  const [view, setView] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "list";
+    try {
+      const v = window.localStorage.getItem(VIEW_KEY);
+      return v === "list" || v === "grid" ? v : "list";
+    } catch {
+      return "list";
+    }
+  });
 
   const [isAdding, setIsAdding] = useState(false);
   const [editing, setEditing] = useState<Movie | null>(null);
@@ -19,6 +32,15 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  function setViewMode(next: ViewMode) {
+    setView(next);
+    try {
+      window.localStorage.setItem(VIEW_KEY, next);
+    } catch {
+      // ignore
+    }
+  }
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -29,7 +51,6 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
     sorted.sort((a, b) => {
       if (sort === "rating_desc") return b.rating - a.rating;
       if (sort === "title_asc") return a.title.localeCompare(b.title);
-      // watched_desc
       const aw = a.watched_on ?? "";
       const bw = b.watched_on ?? "";
       if (aw === bw) return b.created_at.localeCompare(a.created_at);
@@ -52,12 +73,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
   }
 
   if (isAdding) {
-    return (
-      <MovieForm
-        mode="create"
-        onClose={() => setIsAdding(false)}
-      />
-    );
+    return <MovieForm mode="create" onClose={() => setIsAdding(false)} />;
   }
   if (editing) {
     return (
@@ -101,6 +117,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
             <option value={4}>Min ★: 4</option>
             <option value={5}>Min ★: 5</option>
           </select>
+          <ViewToggle value={view} onChange={setViewMode} />
         </div>
       </div>
 
@@ -110,10 +127,60 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
         <EmptyState onAdd={() => setIsAdding(true)} />
       ) : visible.length === 0 ? (
         <p className={styles.empty}>No movies match your filters.</p>
+      ) : view === "grid" ? (
+        <ul className={styles.grid}>
+          {visible.map((m) => (
+            <li
+              key={m.id}
+              className={styles.card}
+              onClick={() => setEditing(m)}
+            >
+              <div className={styles.cardPoster}>
+                <PosterImage
+                  posterPath={m.poster_path}
+                  title={m.title}
+                  size="w342"
+                  width={342}
+                  height={513}
+                />
+                <span className={styles.cardRating}>
+                  {"★".repeat(m.rating)}
+                </span>
+              </div>
+              <div className={styles.cardBody}>
+                <span className={styles.cardTitle}>{m.title}</span>
+                {m.year !== null && (
+                  <span className={styles.cardYear}>{m.year}</span>
+                )}
+              </div>
+              <button
+                type="button"
+                className={styles.cardDelete}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(m);
+                }}
+                disabled={pendingId === m.id}
+                aria-label={`Delete ${m.title}`}
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
       ) : (
         <ul className={styles.list}>
           {visible.map((m) => (
             <li key={m.id} className={styles.row}>
+              <div className={styles.thumbInRow}>
+                <PosterImage
+                  posterPath={m.poster_path}
+                  title={m.title}
+                  size="w92"
+                  width={60}
+                  height={90}
+                />
+              </div>
               <div className={styles.rowMain}>
                 <div className={styles.rowHeader}>
                   <Stars value={m.rating} />
