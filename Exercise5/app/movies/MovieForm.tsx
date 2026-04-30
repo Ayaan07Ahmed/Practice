@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import type { Movie, MovieInput } from "./types";
+import type { TmdbResult } from "./tmdb";
 import { createMovie, updateMovie } from "./actions";
+import TmdbCombobox from "./TmdbCombobox";
 import styles from "./MovieForm.module.css";
 
 type Props =
@@ -15,11 +17,32 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
   const [rating, setRating] = useState<number>(initial?.rating ?? 4);
   const [watchedOn, setWatchedOn] = useState(initial?.watched_on ?? "");
   const [notes, setNotes] = useState(initial?.notes ?? "");
-  const [tmdbId] = useState<number | null>(initial?.tmdb_id ?? null);
-  const [posterPath] = useState<string | null>(initial?.poster_path ?? null);
-  const [overview] = useState<string | null>(initial?.overview ?? null);
+  const [tmdbId, setTmdbId] = useState<number | null>(initial?.tmdb_id ?? null);
+  const [posterPath, setPosterPath] = useState<string | null>(
+    initial?.poster_path ?? null,
+  );
+  const [overview, setOverview] = useState<string | null>(initial?.overview ?? null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Any manual title edit drops the linked TMDB metadata, since the title
+  // and metadata would otherwise drift apart.
+  function handleTextChange(text: string) {
+    setTitle(text);
+    if (tmdbId !== null) {
+      setTmdbId(null);
+      setPosterPath(null);
+      setOverview(null);
+    }
+  }
+
+  function handleTmdbSelect(r: TmdbResult) {
+    setTitle(r.title);
+    setYear(r.year !== null ? r.year.toString() : "");
+    setTmdbId(r.tmdb_id);
+    setPosterPath(r.poster_path);
+    setOverview(r.overview);
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -74,12 +97,10 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
 
       <label className={styles.field}>
         <span>Title <em>required</em></span>
-        <input
-          type="text"
-          required
-          maxLength={200}
+        <TmdbCombobox
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onTextChange={handleTextChange}
+          onSelect={handleTmdbSelect}
           autoFocus
         />
       </label>
