@@ -1,20 +1,20 @@
 :root {
-  /* iOS 6 Newsstand honey-oak wood */
-  --wood-top: #9a6435;       /* warm caramel — top of wall, lit */
-  --wood-mid: #7e4d28;       /* mid-tone */
-  --wood-bottom: #5a371a;    /* deeper brown — bottom of wall */
-  --wood-grain: rgba(60, 30, 10, 0.10);
-  --wood-grain-strong: rgba(60, 30, 10, 0.22);
-  --wood-plank: rgba(0, 0, 0, 0.28);     /* darker line between planks */
-  --wood-plank-edge: rgba(255, 215, 165, 0.12); /* lit edge next to plank line */
-  --wood-highlight: rgba(255, 220, 180, 0.15);
-  --wood-knot: rgba(50, 25, 10, 0.45);
+  /* iOS 6 Newsstand pale pine wood — matched to reference */
+  --wood-top: #d8aa78;       /* light pine — top of wall */
+  --wood-mid: #c99863;       /* mid tan */
+  --wood-bottom: #b08145;    /* slightly deeper bottom (still light) */
+  --wood-grain: rgba(120, 70, 30, 0.07);
+  --wood-grain-strong: rgba(120, 70, 30, 0.13);
+  --wood-plank: rgba(80, 45, 15, 0.22);
+  --wood-plank-edge: rgba(255, 235, 205, 0.18);
+  --wood-highlight: rgba(255, 245, 220, 0.20);
+  --wood-knot: rgba(110, 65, 25, 0.35);
 
-  /* Shelf board */
-  --shelf-edge-top: #d4a76a;   /* lit top edge */
-  --shelf-face-top: #7e4a26;
-  --shelf-face-bottom: #4a2c14;
-  --shelf-bottom: #2c180a;
+  /* Shelf board — matched to reference image */
+  --shelf-edge-top: #ecd0a0;     /* very light cream — polished top, catches light */
+  --shelf-face-top: #b07a40;     /* lit upper face */
+  --shelf-face-bottom: #6e4220;  /* darker lower face */
+  --shelf-bottom: #2c180a;       /* deep front edge shadow */
 
   /* Panels — aged paper/cream library card */
   --panel: #faf6e8;
