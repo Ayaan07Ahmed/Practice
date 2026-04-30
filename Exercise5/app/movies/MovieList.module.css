@@ -198,35 +198,55 @@
   filter: brightness(1.04);
 }
 
-/* Wooden shelf strip under each DVD — extends past card edges to bridge with neighbors */
+/* Wooden shelf board under each row — iOS 6 Newsstand style */
 .card::after {
   content: "";
   position: absolute;
   left: calc(-0.7rem - 1px);
   right: calc(-0.7rem - 1px);
-  bottom: -1.3rem;
-  height: 12px;
+  bottom: -1.8rem;
+  height: 22px;
   background:
+    /* Horizontal grain along the length of the shelf board */
     repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0) 0px,
-      rgba(0, 0, 0, 0) 2px,
-      rgba(0, 0, 0, 0.06) 2px,
-      rgba(0, 0, 0, 0.06) 3px
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.07) 2px,
+      rgba(0, 0, 0, 0.07) 3px,
+      transparent 3px,
+      transparent 5px,
+      rgba(0, 0, 0, 0.04) 5px,
+      rgba(0, 0, 0, 0.04) 6px
     ),
-    linear-gradient(180deg, #5a3318 0%, #3a1f0b 100%);
-  border-top: 1px solid rgba(0, 0, 0, 0.45);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+    /* Subtle longitudinal banding for natural variation */
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      rgba(255, 220, 180, 0.05) 5px,
+      transparent 10px
+    ),
+    /* Vertical face gradient — top lit, bottom dark */
+    linear-gradient(180deg,
+      var(--shelf-face-top) 0%,
+      var(--shelf-face-top) 30%,
+      var(--shelf-face-bottom) 100%);
+  border-bottom: 1px solid var(--shelf-bottom);
   box-shadow:
-    /* Top edge of shelf catches light */
-    inset 0 1px 0 rgba(255, 220, 180, 0.4),
-    /* Cards casting shadow onto shelf */
-    inset 0 4px 5px -3px rgba(0, 0, 0, 0.55),
-    /* Shelf casting its own shadow on the wood wall below */
-    0 3px 4px rgba(0, 0, 0, 0.4);
+    /* Bright top edge — light catching the polished shelf top */
+    inset 0 2px 0 var(--shelf-edge-top),
+    inset 0 3px 1px rgba(255, 235, 200, 0.35),
+    /* Cards' contact shadow on shelf top */
+    inset 0 5px 6px -4px rgba(0, 0, 0, 0.55),
+    /* Front-edge dark line of shelf (board thickness) */
+    inset 0 -1px 0 var(--shelf-bottom),
+    /* Shelf casting shadow onto wall below — soft, fading down */
+    0 4px 6px rgba(0, 0, 0, 0.5),
+    0 8px 14px rgba(0, 0, 0, 0.35),
+    0 14px 20px -4px rgba(0, 0, 0, 0.25);
+  border-radius: 1px;
   z-index: -1;
 }
-/* Counter-translate the shelf so it stays planted when card lifts on hover */
 .card:hover::after {
   transform: translateY(5px);
 }

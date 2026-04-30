@@ -1,15 +1,25 @@
 :root {
-  /* Walnut wood-shelf page background */
-  --wood-top: #8b5a2b;
-  --wood-bottom: #4a2811;
-  --wood-grain: rgba(0, 0, 0, 0.06);
-  --wood-grain-strong: rgba(0, 0, 0, 0.12);
-  --wood-highlight: rgba(255, 220, 180, 0.10);
+  /* iOS 6 Newsstand honey-oak wood */
+  --wood-top: #9a6435;       /* warm caramel — top of wall, lit */
+  --wood-mid: #7e4d28;       /* mid-tone */
+  --wood-bottom: #5a371a;    /* deeper brown — bottom of wall */
+  --wood-grain: rgba(60, 30, 10, 0.10);
+  --wood-grain-strong: rgba(60, 30, 10, 0.22);
+  --wood-plank: rgba(0, 0, 0, 0.28);     /* darker line between planks */
+  --wood-plank-edge: rgba(255, 215, 165, 0.12); /* lit edge next to plank line */
+  --wood-highlight: rgba(255, 220, 180, 0.15);
+  --wood-knot: rgba(50, 25, 10, 0.45);
 
-  /* Panels — aged-cream "library card" feel */
-  --panel: #f9f6ee;
-  --panel-tint: #f3eee2;
-  --panel-2: #ece6d4;
+  /* Shelf board */
+  --shelf-edge-top: #d4a76a;   /* lit top edge */
+  --shelf-face-top: #7e4a26;
+  --shelf-face-bottom: #4a2c14;
+  --shelf-bottom: #2c180a;
+
+  /* Panels — aged paper/cream library card */
+  --panel: #faf6e8;
+  --panel-tint: #f1ead4;
+  --panel-2: #e8debe;
 
   /* Text */
   --text: #1c1c1e;
@@ -86,24 +96,49 @@ html { color-scheme: light; }
 body {
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at 22% 8%, var(--wood-highlight), transparent 55%),
+    /* Top luminosity — light from above */
+    radial-gradient(ellipse at 30% 0%, var(--wood-highlight), transparent 60%),
+    /* Knot marks scattered across the wall (fixed positions on viewport) */
+    radial-gradient(ellipse 14px 5px at 18% 22%, var(--wood-knot), transparent 70%),
+    radial-gradient(ellipse 18px 6px at 72% 38%, var(--wood-knot), transparent 70%),
+    radial-gradient(ellipse 11px 4px at 88% 70%, var(--wood-knot), transparent 70%),
+    radial-gradient(ellipse 16px 5px at 12% 82%, var(--wood-knot), transparent 70%),
+    radial-gradient(ellipse 13px 4px at 50% 50%, var(--wood-knot), transparent 75%),
+    /* Plank divisions — thin dark line + adjacent highlight, repeating every ~110px */
     repeating-linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0) 0px,
-      rgba(0, 0, 0, 0) 1px,
+      transparent 0px,
+      transparent 108px,
+      var(--wood-plank) 108px,
+      var(--wood-plank) 109px,
+      var(--wood-plank-edge) 109px,
+      var(--wood-plank-edge) 110px,
+      transparent 110px,
+      transparent 220px
+    ),
+    /* Fine vertical grain — every 1-2 px */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 1px,
       var(--wood-grain) 1px,
       var(--wood-grain) 2px
     ),
+    /* Slightly stronger grain banding every 6-7px */
     repeating-linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0) 0px,
-      rgba(0, 0, 0, 0) 6px,
+      transparent 0px,
+      transparent 5px,
+      var(--wood-grain-strong) 5px,
       var(--wood-grain-strong) 6px,
-      var(--wood-grain-strong) 7px,
-      rgba(0, 0, 0, 0) 7px,
-      rgba(0, 0, 0, 0) 14px
+      transparent 6px,
+      transparent 13px
     ),
-    linear-gradient(180deg, var(--wood-top) 0%, var(--wood-bottom) 100%);
+    /* Top-to-bottom luminosity */
+    linear-gradient(180deg,
+      var(--wood-top) 0%,
+      var(--wood-mid) 55%,
+      var(--wood-bottom) 100%);
   background-attachment: fixed;
 }
 
