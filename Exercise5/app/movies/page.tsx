@@ -11,6 +11,12 @@ export default async function MoviesPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const displayName =
+    typeof user.user_metadata?.display_name === "string" &&
+    user.user_metadata.display_name.trim().length > 0
+      ? user.user_metadata.display_name.trim()
+      : user.email;
+
   const { data, error } = await supabase
     .from("movies")
     .select("*")
@@ -22,7 +28,7 @@ export default async function MoviesPage() {
       <header className={styles.header}>
         <h1 className={styles.title}>🎬 Movie Tracker</h1>
         <div className={styles.userBar}>
-          <span className={styles.email}>{user.email}</span>
+          <span className={styles.email}>{displayName}</span>
           <form action="/auth/signout" method="post">
             <button type="submit">Sign out</button>
           </form>

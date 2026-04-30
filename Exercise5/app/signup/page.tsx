@@ -8,6 +8,7 @@ import styles from "../login/auth.module.css";
 
 export default function SignupPage() {
   const router = useRouter();
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -19,6 +20,11 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
 
+    const trimmedName = displayName.trim();
+    if (trimmedName.length < 1 || trimmedName.length > 50) {
+      setError("Display name must be 1–50 characters.");
+      return;
+    }
     if (password !== confirm) {
       setError("Passwords don't match.");
       return;
@@ -35,6 +41,7 @@ export default function SignupPage() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: { display_name: trimmedName },
       },
     });
     if (error) {
@@ -79,6 +86,20 @@ export default function SignupPage() {
         <p className={styles.subtitle}>Create an account</p>
 
         {error && <div className="error">{error}</div>}
+
+        <label className={styles.field}>
+          <span>Display name</span>
+          <input
+            type="text"
+            autoComplete="name"
+            required
+            minLength={1}
+            maxLength={50}
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="What should we call you?"
+          />
+        </label>
 
         <label className={styles.field}>
           <span>Email</span>
