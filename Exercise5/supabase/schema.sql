@@ -1,0 +1,47 @@
+-- Movie Tracker schema
+-- Paste this into the Supabase SQL Editor (Project → SQL Editor → New query) and Run.
+
+create table if not exists public.movies (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  title       text not null check (char_length(title) between 1 and 200),
+  year        int  null
+              check (year is null or (year >= 1888 and year <= extract(year from now())::int + 5)),
+  rating      int  not null check (rating between 1 and 5),
+  notes       text null check (notes is null or char_length(notes) <= 2000),
+  watched_on  date null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists movies_user_watched_idx
+  on public.movies (user_id, watched_on desc nulls last, created_at desc);
+
+create index if not exists movies_user_rating_idx
+  on public.movies (user_id, rating);
+
+create index if not exists movies_user_title_idx
+  on public.movies (user_id, lower(title));
+
+alter table public.movies enable row level security;
+
+drop policy if exists "movies_select_own" on public.movies;
+drop policy if exists "movies_insert_own" on public.movies;
+drop policy if exists "movies_update_own" on public.movies;
+drop policy if exists "movies_delete_own" on public.movies;
+
+create policy "movies_select_own"
+  on public.movies for select
+  using (auth.uid() = user_id);
+
+create policy "movies_insert_own"
+  on public.movies for insert
+  with check (auth.uid() = user_id);
+
+create policy "movies_update_own"
+  on public.movies for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "movies_delete_own"
+  on public.movies for delete
+  using (auth.uid() = user_id);
