@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import type { Movie } from "./types";
 import { deleteMovie } from "./actions";
 import MovieForm from "./MovieForm";
+import MovieView from "./MovieView";
 import PosterImage from "./PosterImage";
 import ViewToggle, { type ViewMode } from "./ViewToggle";
 import styles from "./MovieList.module.css";
@@ -28,6 +29,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
 
   const [isAdding, setIsAdding] = useState(false);
   const [editing, setEditing] = useState<Movie | null>(null);
+  const [viewing, setViewing] = useState<Movie | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -61,14 +63,18 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
     return sorted;
   }, [initialMovies, search, sort, minRating]);
 
-  function handleDelete(movie: Movie) {
+  function handleDelete(movie: Movie, onSuccess?: () => void) {
     if (!confirm(`Delete "${movie.title}"? This cannot be undone.`)) return;
     setError(null);
     setPendingId(movie.id);
     startTransition(async () => {
       const res = await deleteMovie(movie.id);
       setPendingId(null);
-      if (res.error) setError(res.error);
+      if (res.error) {
+        setError(res.error);
+      } else {
+        onSuccess?.();
+      }
     });
   }
 
@@ -81,6 +87,20 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
         mode="edit"
         initial={editing}
         onClose={() => setEditing(null)}
+      />
+    );
+  }
+  if (viewing) {
+    return (
+      <MovieView
+        movie={viewing}
+        onEdit={() => {
+          setEditing(viewing);
+          setViewing(null);
+        }}
+        onDelete={() => handleDelete(viewing, () => setViewing(null))}
+        onClose={() => setViewing(null)}
+        isDeleting={pendingId === viewing.id}
       />
     );
   }
@@ -133,7 +153,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
             <li
               key={m.id}
               className={styles.card}
-              onClick={() => setEditing(m)}
+              onClick={() => setViewing(m)}
               title={m.overview ?? undefined}
             >
               <div className={styles.cardPoster}>
@@ -172,7 +192,11 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
       ) : (
         <ul className={styles.list}>
           {visible.map((m) => (
-            <li key={m.id} className={styles.row}>
+            <li
+              key={m.id}
+              className={styles.row}
+              onClick={() => setViewing(m)}
+            >
               <div className={styles.thumbInRow}>
                 <PosterImage
                   posterPath={m.poster_path}
@@ -193,12 +217,21 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
                 {m.notes && <p className={styles.notes}>“{m.notes}”</p>}
               </div>
               <div className={styles.rowActions}>
-                <button onClick={() => setEditing(m)} disabled={pendingId === m.id}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditing(m);
+                  }}
+                  disabled={pendingId === m.id}
+                >
                   Edit
                 </button>
                 <button
                   className="danger"
-                  onClick={() => handleDelete(m)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(m);
+                  }}
                   disabled={pendingId === m.id}
                 >
                   {pendingId === m.id ? "Deleting…" : "Delete"}
