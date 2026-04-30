@@ -7,6 +7,9 @@ export type Movie = {
   notes: string | null;
   watched_on: string | null; // ISO date string (YYYY-MM-DD)
   created_at: string;
+  tmdb_id: number | null;
+  poster_path: string | null;
+  overview: string | null;
 };
 
 export type MovieInput = {
@@ -15,4 +18,7 @@ export type MovieInput = {
   rating: number;
   notes: string | null;
   watched_on: string | null;
+  tmdb_id: number | null;
+  poster_path: string | null;
+  overview: string | null;
 };

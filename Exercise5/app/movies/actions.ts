@@ -8,6 +8,8 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 type ActionResult = { error?: string };
 
+const POSTER_PATH_RE = /^\/[A-Za-z0-9_./-]+$/;
+
 function validate(input: MovieInput): string | null {
   const title = input.title?.trim() ?? "";
   if (title.length < 1 || title.length > 200) return "Title must be 1–200 characters.";
@@ -19,6 +21,14 @@ function validate(input: MovieInput): string | null {
   }
   if (input.notes !== null && input.notes.length > 2000)
     return "Notes must be 2000 characters or fewer.";
+  if (input.tmdb_id !== null && !Number.isInteger(input.tmdb_id))
+    return "Invalid TMDB id.";
+  if (input.poster_path !== null) {
+    if (input.poster_path.length > 200 || !POSTER_PATH_RE.test(input.poster_path))
+      return "Invalid poster path.";
+  }
+  if (input.overview !== null && input.overview.length > 4000)
+    return "Overview must be 4000 characters or fewer.";
   return null;
 }
 
@@ -29,6 +39,9 @@ function normalize(input: MovieInput): MovieInput {
     rating: input.rating,
     notes: input.notes && input.notes.trim().length > 0 ? input.notes.trim() : null,
     watched_on: input.watched_on && input.watched_on.length > 0 ? input.watched_on : null,
+    tmdb_id: input.tmdb_id,
+    poster_path: input.poster_path,
+    overview: input.overview && input.overview.trim().length > 0 ? input.overview.trim() : null,
   };
 }
 

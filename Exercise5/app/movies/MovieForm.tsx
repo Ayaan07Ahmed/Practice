@@ -15,6 +15,9 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
   const [rating, setRating] = useState<number>(initial?.rating ?? 4);
   const [watchedOn, setWatchedOn] = useState(initial?.watched_on ?? "");
   const [notes, setNotes] = useState(initial?.notes ?? "");
+  const [tmdbId] = useState<number | null>(initial?.tmdb_id ?? null);
+  const [posterPath] = useState<string | null>(initial?.poster_path ?? null);
+  const [overview] = useState<string | null>(initial?.overview ?? null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -43,6 +46,9 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
       rating,
       notes: notes.trim() === "" ? null : notes,
       watched_on: watchedOn === "" ? null : watchedOn,
+      tmdb_id: tmdbId,
+      poster_path: posterPath,
+      overview,
     };
 
     startTransition(async () => {

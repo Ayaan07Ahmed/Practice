@@ -10,6 +10,11 @@ create table if not exists public.movies (
   rating      int  not null check (rating between 1 and 5),
   notes       text null check (notes is null or char_length(notes) <= 2000),
   watched_on  date null,
+  tmdb_id     int  null,
+  poster_path text null
+              check (poster_path is null or char_length(poster_path) <= 200),
+  overview    text null
+              check (overview is null or char_length(overview) <= 4000),
   created_at  timestamptz not null default now()
 );
 
@@ -21,6 +26,10 @@ create index if not exists movies_user_rating_idx
 
 create index if not exists movies_user_title_idx
   on public.movies (user_id, lower(title));
+
+create index if not exists movies_user_tmdb_idx
+  on public.movies (user_id, tmdb_id)
+  where tmdb_id is not null;
 
 alter table public.movies enable row level security;
 
