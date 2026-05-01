@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
 import type { TmdbResult } from "@/app/(authenticated)/movies/tmdb";
 import { posterUrl } from "@/app/(authenticated)/movies/poster";
 import styles from "./PosterGrid.module.css";
@@ -9,7 +8,7 @@ import styles from "./PosterGrid.module.css";
 type Props = { results: TmdbResult[] };
 
 export default function PosterGrid({ results }: Props) {
-  const sorted = useMemo(() => results, [results]);
+  const sorted = results;
 
   if (sorted.length === 0) {
     return <p className={styles.empty}>No results.</p>;
@@ -25,7 +24,7 @@ export default function PosterGrid({ results }: Props) {
           title: r.title,
           year: r.year !== null ? String(r.year) : "",
           poster_path: r.poster_path ?? "",
-          overview: r.overview ?? "",
+          overview: (r.overview ?? "").slice(0, 500),
         });
         const baseHref = `/movies?${params.toString()}`;
         return (
@@ -33,7 +32,7 @@ export default function PosterGrid({ results }: Props) {
             <div className={styles.poster}>
               {url ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={url} alt={`${r.title} poster`} />
+                <img src={url} alt={`${r.title} poster`} loading="lazy" width="342" height="513" />
               ) : (
                 <div className={styles.placeholder}>🎬</div>
               )}
