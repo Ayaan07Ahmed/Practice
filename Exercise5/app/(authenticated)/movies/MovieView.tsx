@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import type { Movie } from "./types";
 import PosterImage from "./PosterImage";
 import styles from "./MovieView.module.css";
@@ -10,6 +11,7 @@ type Props = {
   onDelete: () => void;
   onClose: () => void;
   isDeleting: boolean;
+  onMarkWatched?: (rating: number) => Promise<void>;
 };
 
 export default function MovieView({
@@ -18,7 +20,25 @@ export default function MovieView({
   onDelete,
   onClose,
   isDeleting,
+  onMarkWatched,
 }: Props) {
+  const [marking, setMarking] = useState(false);
+  const [rating, setRating] = useState(4);
+  const [markError, setMarkError] = useState<string | null>(null);
+  const [isMarkPending, startMarkTransition] = useTransition();
+
+  function handleMark() {
+    if (!onMarkWatched) return;
+    setMarkError(null);
+    startMarkTransition(async () => {
+      try {
+        await onMarkWatched(rating);
+      } catch (e) {
+        setMarkError(e instanceof Error ? e.message : "Failed to save.");
+      }
+    });
+  }
+
   return (
     <article className={styles.card}>
       <header className={styles.header}>
@@ -66,27 +86,77 @@ export default function MovieView({
         </div>
       </div>
 
+      {markError && <div className="error">{markError}</div>}
+
       <footer className={styles.actions}>
-        <button type="button" onClick={onClose} disabled={isDeleting}>
-          ← Back
-        </button>
-        <div className={styles.spacer} />
-        <button
-          type="button"
-          className="danger"
-          onClick={onDelete}
-          disabled={isDeleting}
-        >
-          {isDeleting ? "Deleting…" : "Delete"}
-        </button>
-        <button
-          type="button"
-          className="primary"
-          onClick={onEdit}
-          disabled={isDeleting}
-        >
-          Edit
-        </button>
+        {marking ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setMarking(false);
+                setMarkError(null);
+              }}
+              disabled={isMarkPending}
+            >
+              Cancel
+            </button>
+            <div className={styles.markPicker}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  type="button"
+                  key={n}
+                  className={`${styles.starBtn} ${n <= rating ? styles.starOn : ""}`}
+                  onClick={() => setRating(n)}
+                  aria-label={`${n} stars`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="primary"
+              onClick={handleMark}
+              disabled={isMarkPending}
+            >
+              {isMarkPending ? "Saving…" : "Save"}
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" onClick={onClose} disabled={isDeleting}>
+              ← Back
+            </button>
+            <div className={styles.spacer} />
+            {onMarkWatched && (
+              <button
+                type="button"
+                className="primary"
+                onClick={() => setMarking(true)}
+                disabled={isDeleting}
+              >
+                Mark watched
+              </button>
+            )}
+            <button
+              type="button"
+              className="danger"
+              onClick={onDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting…" : "Delete"}
+            </button>
+            <button
+              type="button"
+              className="primary"
+              onClick={onEdit}
+              disabled={isDeleting}
+            >
+              Edit
+            </button>
+          </>
+        )}
       </footer>
     </article>
   );

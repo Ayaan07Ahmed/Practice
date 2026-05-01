@@ -141,3 +141,32 @@
   .actions { flex-wrap: wrap; }
   .spacer { flex-basis: 100%; }
 }
+
+.markPicker {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex: 1 1 auto;
+  justify-content: center;
+}
+.starBtn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.3rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--gold-dim);
+  box-shadow: none;
+  text-shadow: none;
+  cursor: pointer;
+  transition: color 100ms ease, transform 100ms ease;
+}
+.starBtn:hover:not(:disabled),
+.starOn {
+  background: linear-gradient(180deg, var(--gold-top) 0%, var(--gold-bottom) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+}
