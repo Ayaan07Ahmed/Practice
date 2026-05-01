@@ -8,15 +8,13 @@ import styles from "./PosterGrid.module.css";
 type Props = { results: TmdbResult[] };
 
 export default function PosterGrid({ results }: Props) {
-  const sorted = results;
-
-  if (sorted.length === 0) {
+  if (results.length === 0) {
     return <p className={styles.empty}>No results.</p>;
   }
 
   return (
     <ul className={styles.grid}>
-      {sorted.map((r) => {
+      {results.map((r) => {
         const url = posterUrl(r.poster_path, "w342");
         const params = new URLSearchParams({
           add: "1",

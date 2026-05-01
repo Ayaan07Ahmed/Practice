@@ -155,7 +155,7 @@ All four use the same Bearer-token + 5s AbortController + degrade-to-empty patte
 - Big numbers: total watched, average rating
 - Ratings distribution: 5 horizontal bars (1★–5★) sized by count
 - Movies per year: vertical bars (top ~10 years)
-- Top 5 highest-rated (list with poster thumbnails)
+- Top 5 highest-rated (text list: gold stars + title + year)
 
 All rendered server-side; only the bars are client-side via `<StatsBars>` for the CSS animation.
 
