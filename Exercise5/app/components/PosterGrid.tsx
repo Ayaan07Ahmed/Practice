@@ -40,7 +40,7 @@ export default function PosterGrid({ results }: Props) {
             </div>
             <div className={styles.body}>
               <span className={styles.title} title={r.title}>{r.title}</span>
-              {r.year !== null && <span className={styles.year}>{r.year}</span>}
+              <span className={styles.year}>{r.year !== null ? r.year : " "}</span>
             </div>
           </li>
         );

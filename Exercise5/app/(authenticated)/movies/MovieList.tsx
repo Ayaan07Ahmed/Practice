@@ -201,9 +201,9 @@ export default function MovieList({
               </div>
               <div className={styles.cardBody}>
                 <span className={styles.cardTitle}>{m.title}</span>
-                {m.year !== null && (
-                  <span className={styles.cardYear}>{m.year}</span>
-                )}
+                <span className={styles.cardYear}>
+                  {m.year !== null ? m.year : " "}
+                </span>
               </div>
               <button
                 type="button"
