@@ -72,6 +72,8 @@
   min-width: 0;
 }
 .title {
+  display: block;
+  max-width: 100%;
   font-weight: 700;
   font-size: 0.9rem;
   white-space: nowrap;

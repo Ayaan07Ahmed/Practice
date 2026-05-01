@@ -82,8 +82,12 @@
 
 .rowTitle {
   font-size: 1rem;
-  word-break: break-word;
   text-shadow: var(--text-emboss-light);
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .year {
@@ -405,6 +409,8 @@
     0 2px 4px rgba(0, 0, 0, 0.4);
 }
 .cardTitle {
+  display: block;
+  max-width: 100%;
   font-weight: 700;
   font-size: 0.86rem;
   white-space: nowrap;
