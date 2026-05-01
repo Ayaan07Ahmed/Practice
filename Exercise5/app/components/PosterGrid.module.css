@@ -1,0 +1,104 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 380px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+.empty {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.35);
+}
+
+.poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: #1c1c1e;
+}
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 2rem;
+}
+
+.body {
+  padding: 0.55rem 0.7rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: var(--text-emboss-light);
+}
+.year {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+.actionBtn {
+  flex: 1;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.35rem 0.4rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--button-white-top) 0%, var(--button-white-bottom) 100%);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  text-shadow: var(--text-emboss-light);
+  box-shadow: var(--gloss-highlight), var(--shadow-sm);
+}
+.actionBtn:hover { filter: brightness(1.04); text-decoration: none; }
+.actionBtnPrimary {
+  background: linear-gradient(180deg, var(--button-top) 0%, var(--button-bottom) 100%);
+  color: var(--accent-fg);
+  border-color: rgba(0, 0, 0, 0.4);
+  text-shadow: var(--text-emboss-dark);
+}

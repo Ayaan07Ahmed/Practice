@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { Movie } from "./types";
 import { deleteMovie } from "./actions";
 import MovieForm from "./MovieForm";
@@ -13,7 +14,13 @@ type SortKey = "watched_desc" | "rating_desc" | "title_asc";
 
 const VIEW_KEY = "movie-tracker.viewMode";
 
-export default function MovieList({ initialMovies }: { initialMovies: Movie[] }) {
+export default function MovieList({
+  initialMovies,
+  prefill,
+}: {
+  initialMovies: Movie[];
+  prefill?: Partial<import("./types").MovieInput> | null;
+}) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("watched_desc");
   const [minRating, setMinRating] = useState<number>(0);
@@ -27,13 +34,26 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
     }
   });
 
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAddingExplicit, setIsAddingExplicit] = useState(false);
   const [editing, setEditing] = useState<Movie | null>(null);
   const [viewing, setViewing] = useState<Movie | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  const router = useRouter();
+  const [pendingPrefill, setPendingPrefill] = useState<typeof prefill>(prefill ?? null);
+
+  // Strip prefill params from the URL on mount so a refresh doesn't reopen the form.
+  // No setState in this effect body — `isAdding` is derived from `pendingPrefill` below.
+  useEffect(() => {
+    if (pendingPrefill) {
+      router.replace("/movies");
+    }
+  }, [pendingPrefill, router]);
+
+  const isAdding = isAddingExplicit || pendingPrefill !== null;
 
   function setViewMode(next: ViewMode) {
     setView(next);
@@ -79,7 +99,16 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
   }
 
   if (isAdding) {
-    return <MovieForm mode="create" onClose={() => setIsAdding(false)} />;
+    return (
+      <MovieForm
+        mode="create"
+        prefill={pendingPrefill ?? undefined}
+        onClose={() => {
+          setIsAddingExplicit(false);
+          setPendingPrefill(null);
+        }}
+      />
+    );
   }
   if (editing) {
     return (
@@ -108,7 +137,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
   return (
     <section className={styles.section}>
       <div className={styles.toolbar}>
-        <button className="primary" onClick={() => setIsAdding(true)}>
+        <button className="primary" onClick={() => setIsAddingExplicit(true)}>
           + Add movie
         </button>
 
@@ -144,7 +173,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
       {error && <div className="error" style={{ marginBottom: "1rem" }}>{error}</div>}
 
       {initialMovies.length === 0 ? (
-        <EmptyState onAdd={() => setIsAdding(true)} />
+        <EmptyState onAdd={() => setIsAddingExplicit(true)} />
       ) : visible.length === 0 ? (
         <p className={styles.empty}>No movies match your filters.</p>
       ) : view === "grid" ? (

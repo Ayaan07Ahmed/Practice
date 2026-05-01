@@ -8,23 +8,25 @@ import TmdbCombobox from "./TmdbCombobox";
 import styles from "./MovieForm.module.css";
 
 type Props =
-  | { mode: "create"; onClose: () => void; initial?: undefined }
-  | { mode: "edit"; onClose: () => void; initial: Movie };
+  | {
+      mode: "create";
+      onClose: () => void;
+      initial?: undefined;
+      prefill?: Partial<import("./types").MovieInput>;
+    }
+  | { mode: "edit"; onClose: () => void; initial: Movie; prefill?: undefined };
 
-export default function MovieForm({ mode, onClose, initial }: Props) {
-  const [title, setTitle] = useState(initial?.title ?? "");
-  const [year, setYear] = useState(initial?.year?.toString() ?? "");
-  const [rating, setRating] = useState<number | null>(initial?.rating ?? 4);
-  const [status, setStatus] = useState<"watched" | "watchlist">(
-    initial?.status ?? "watched",
-  );
-  const [watchedOn, setWatchedOn] = useState(initial?.watched_on ?? "");
-  const [notes, setNotes] = useState(initial?.notes ?? "");
-  const [tmdbId, setTmdbId] = useState<number | null>(initial?.tmdb_id ?? null);
-  const [posterPath, setPosterPath] = useState<string | null>(
-    initial?.poster_path ?? null,
-  );
-  const [overview, setOverview] = useState<string | null>(initial?.overview ?? null);
+export default function MovieForm({ mode, onClose, initial, prefill }: Props) {
+  const seed = initial ?? prefill;
+  const [title, setTitle] = useState(seed?.title ?? "");
+  const [year, setYear] = useState(seed?.year != null ? String(seed.year) : "");
+  const [rating, setRating] = useState<number | null>(seed?.rating ?? 4);
+  const [watchedOn, setWatchedOn] = useState(seed?.watched_on ?? "");
+  const [notes, setNotes] = useState(seed?.notes ?? "");
+  const [tmdbId, setTmdbId] = useState<number | null>(seed?.tmdb_id ?? null);
+  const [posterPath, setPosterPath] = useState<string | null>(seed?.poster_path ?? null);
+  const [overview, setOverview] = useState<string | null>(seed?.overview ?? null);
+  const [status, setStatus] = useState<"watched" | "watchlist">(seed?.status ?? "watched");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 

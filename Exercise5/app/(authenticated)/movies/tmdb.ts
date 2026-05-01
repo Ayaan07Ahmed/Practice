@@ -73,3 +73,28 @@ function toTmdbResult(m: TmdbApiMovie): TmdbResult {
     overview: m.overview && m.overview.trim().length > 0 ? m.overview : null,
   };
 }
+
+const TRENDING_ENDPOINT = "https://api.themoviedb.org/3/trending/movie/week";
+
+export async function getTrending(): Promise<SearchResponse> {
+  const token = process.env.TMDB_API_KEY;
+  if (!token) return { results: [], error: "TMDB key not configured" };
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+
+  try {
+    const res = await fetch(`${TRENDING_ENDPOINT}?language=en-US`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      signal: ctrl.signal,
+      cache: "no-store",
+    });
+    if (!res.ok) return { results: [] };
+    const data = (await res.json()) as { results?: TmdbApiMovie[] };
+    return { results: (data.results ?? []).slice(0, 20).map(toTmdbResult) };
+  } catch {
+    return { results: [] };
+  } finally {
+    clearTimeout(timer);
+  }
+}
