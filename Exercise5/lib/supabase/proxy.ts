@@ -34,7 +34,19 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isProtected = path.startsWith("/movies");
+  const isProtected =
+    path === "/movies" ||
+    path.startsWith("/movies/") ||
+    path === "/watchlist" ||
+    path.startsWith("/watchlist/") ||
+    path === "/trending" ||
+    path.startsWith("/trending/") ||
+    path === "/discover" ||
+    path.startsWith("/discover/") ||
+    path === "/stats" ||
+    path.startsWith("/stats/") ||
+    path === "/profile" ||
+    path.startsWith("/profile/");
   const isAuthRoute = path === "/login" || path === "/signup";
 
   if (!user && isProtected) {
