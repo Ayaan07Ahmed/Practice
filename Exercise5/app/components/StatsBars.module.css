@@ -1,0 +1,33 @@
+.barRow {
+  display: grid;
+  grid-template-columns: 3rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.barLabel {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--text-emboss-light);
+}
+.barTrack {
+  height: 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--inset-shadow);
+  overflow: hidden;
+}
+.barFill {
+  height: 100%;
+  background: linear-gradient(180deg, var(--gold-top) 0%, var(--gold-bottom) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: width 320ms ease;
+}
+.barCount {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
