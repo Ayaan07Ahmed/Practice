@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { Movie, MovieInput } from "./types";
 import type { TmdbResult } from "./tmdb";
 import { createMovie, updateMovie } from "./actions";
@@ -17,16 +18,22 @@ type Props =
   | { mode: "edit"; onClose: () => void; initial: Movie; prefill?: undefined };
 
 export default function MovieForm({ mode, onClose, initial, prefill }: Props) {
+  const router = useRouter();
   const seed = initial ?? prefill;
+  const initialStatus: "watched" | "watchlist" = seed?.status ?? "watched";
   const [title, setTitle] = useState(seed?.title ?? "");
   const [year, setYear] = useState(seed?.year != null ? String(seed.year) : "");
-  const [rating, setRating] = useState<number | null>(seed?.rating ?? 4);
+  // Watchlist seeds carry no rating; defaulting to 4 would silently submit a
+  // fabricated rating if the user toggles status to "watched" without picking.
+  const [rating, setRating] = useState<number | null>(
+    initialStatus === "watchlist" ? null : (seed?.rating ?? 4),
+  );
   const [watchedOn, setWatchedOn] = useState(seed?.watched_on ?? "");
   const [notes, setNotes] = useState(seed?.notes ?? "");
   const [tmdbId, setTmdbId] = useState<number | null>(seed?.tmdb_id ?? null);
   const [posterPath, setPosterPath] = useState<string | null>(seed?.poster_path ?? null);
   const [overview, setOverview] = useState<string | null>(seed?.overview ?? null);
-  const [status, setStatus] = useState<"watched" | "watchlist">(seed?.status ?? "watched");
+  const [status, setStatus] = useState<"watched" | "watchlist">(initialStatus);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -95,6 +102,12 @@ export default function MovieForm({ mode, onClose, initial, prefill }: Props) {
         setError(res.error);
         return;
       }
+      // Land the user on the list that matches the saved status so the new /
+      // updated row is visible. Same path = soft refresh; different path =
+      // navigation that unmounts this form.
+      const targetPath = status === "watchlist" ? "/watchlist" : "/movies";
+      router.push(targetPath);
+      router.refresh();
       onClose();
     });
   }

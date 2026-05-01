@@ -22,6 +22,7 @@ export default function WatchlistList({ initialMovies }: { initialMovies: Movie[
   if (viewing) {
     return (
       <MovieView
+        key={viewing.id}
         movie={viewing}
         onEdit={() => {
           setEditing(viewing);

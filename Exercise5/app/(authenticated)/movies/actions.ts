@@ -61,6 +61,16 @@ function normalize(input: MovieInput): MovieInput {
   };
 }
 
+// Every mutation invalidates both list pages plus the stats and profile
+// counts. Cheaper than reasoning per-action which to refresh, and each path
+// only fetches if the route is actually re-rendered.
+function revalidateAllMovieViews() {
+  revalidatePath("/movies");
+  revalidatePath("/watchlist");
+  revalidatePath("/stats");
+  revalidatePath("/profile");
+}
+
 export async function createMovie(input: MovieInput): Promise<ActionResult> {
   const v = validate(input);
   if (v) return { error: v };
@@ -77,7 +87,7 @@ export async function createMovie(input: MovieInput): Promise<ActionResult> {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/movies");
+  revalidateAllMovieViews();
   return {};
 }
 
@@ -86,22 +96,39 @@ export async function updateMovie(id: string, input: MovieInput): Promise<Action
   if (v) return { error: v };
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
+  // user_id check is defense-in-depth on top of RLS.
   const { error } = await supabase
     .from("movies")
     .update(normalize(input))
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) return { error: error.message };
 
-  revalidatePath("/movies");
+  revalidateAllMovieViews();
   return {};
 }
 
 export async function deleteMovie(id: string): Promise<ActionResult> {
   const supabase = await createClient();
-  const { error } = await supabase.from("movies").delete().eq("id", id);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
+  const { error } = await supabase
+    .from("movies")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
   if (error) return { error: error.message };
-  revalidatePath("/movies");
+  revalidateAllMovieViews();
   return {};
 }
 
@@ -118,14 +145,19 @@ export async function markAsWatched(
     return { error: "Invalid date." };
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated." };
+
   const { error } = await supabase
     .from("movies")
     .update({ status: "watched", rating, watched_on: watchedOn })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) return { error: error.message };
 
-  revalidatePath("/movies");
-  revalidatePath("/watchlist");
+  revalidateAllMovieViews();
   return {};
 }

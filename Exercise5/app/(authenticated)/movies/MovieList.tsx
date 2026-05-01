@@ -122,6 +122,7 @@ export default function MovieList({
   if (viewing) {
     return (
       <MovieView
+        key={viewing.id}
         movie={viewing}
         onEdit={() => {
           setEditing(viewing);

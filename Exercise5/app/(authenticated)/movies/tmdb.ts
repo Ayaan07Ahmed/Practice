@@ -52,7 +52,7 @@ export async function searchMovies(query: string): Promise<SearchResponse> {
       signal: ctrl.signal,
       cache: "no-store",
     });
-    if (!res.ok) return { results: [] };
+    if (!res.ok) return { results: [], error: `TMDB error ${res.status}` };
     const data = (await res.json()) as { results?: TmdbApiMovie[] };
     const results = (data.results ?? []).slice(0, 6).map(toTmdbResult);
     return { results };
@@ -89,7 +89,7 @@ export async function getTrending(): Promise<SearchResponse> {
       signal: ctrl.signal,
       cache: "no-store",
     });
-    if (!res.ok) return { results: [] };
+    if (!res.ok) return { results: [], error: `TMDB error ${res.status}` };
     const data = (await res.json()) as { results?: TmdbApiMovie[] };
     return { results: (data.results ?? []).slice(0, 20).map(toTmdbResult) };
   } catch {
@@ -116,7 +116,7 @@ export async function getGenres(): Promise<{ genres: TmdbGenre[]; error?: string
       signal: ctrl.signal,
       cache: "no-store",
     });
-    if (!res.ok) return { genres: [] };
+    if (!res.ok) return { genres: [], error: `TMDB error ${res.status}` };
     const data = (await res.json()) as { genres?: TmdbGenre[] };
     return { genres: data.genres ?? [] };
   } catch {
@@ -147,7 +147,7 @@ export async function discoverByGenre(genreId: number): Promise<SearchResponse> 
       signal: ctrl.signal,
       cache: "no-store",
     });
-    if (!res.ok) return { results: [] };
+    if (!res.ok) return { results: [], error: `TMDB error ${res.status}` };
     const data = (await res.json()) as { results?: TmdbApiMovie[] };
     return { results: (data.results ?? []).slice(0, 20).map(toTmdbResult) };
   } catch {
