@@ -47,7 +47,7 @@ export default function PosterImage({
       alt={`${title} poster`}
       width={width}
       height={height}
-      style={{ borderRadius: "8px", objectFit: "cover" }}
+      style={{ borderRadius: "8px", objectFit: "cover", display: "block" }}
       unoptimized={false}
     />
   );
