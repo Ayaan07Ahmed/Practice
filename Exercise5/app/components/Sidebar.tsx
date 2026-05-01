@@ -41,10 +41,20 @@ export default function Sidebar({ displayName, email }: Props) {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Lock body scroll when open on mobile
+  // Close on browser back/forward navigation
   useEffect(() => {
+    function onPop() {
+      setOpen(false);
+    }
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  // Lock body scroll while the drawer is open on mobile
+  useEffect(() => {
+    if (!open) return;
     const prev = document.body.style.overflow;
-    document.body.style.overflow = open ? "hidden" : prev;
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
