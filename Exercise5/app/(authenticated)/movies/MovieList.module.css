@@ -209,6 +209,7 @@
   gap: 0.55rem;
   padding-top: 0.5rem;
   perspective: 1100px;
+  min-width: 0;
   transition: filter 140ms ease;
 }
 .card:hover {
