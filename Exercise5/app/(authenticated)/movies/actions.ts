@@ -11,6 +11,9 @@ type ActionResult = { error?: string };
 const POSTER_PATH_RE = /^\/[A-Za-z0-9_./-]+$/;
 const VALID_STATUSES = new Set(["watched", "watchlist"]);
 
+// Mirrors movies_rating_check in supabase/migrations/2026-05-01-watchlist.sql.
+// Keep these in sync — Postgres will reject mismatched writes either way,
+// but matching them lets the UI surface a friendly error first.
 function validate(input: MovieInput): string | null {
   const title = input.title?.trim() ?? "";
   if (title.length < 1 || title.length > 200) return "Title must be 1–200 characters.";
@@ -102,14 +105,22 @@ export async function deleteMovie(id: string): Promise<ActionResult> {
   return {};
 }
 
-export async function markAsWatched(id: string, rating: number): Promise<ActionResult> {
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export async function markAsWatched(
+  id: string,
+  rating: number,
+  watchedOn: string,
+): Promise<ActionResult> {
   if (!Number.isInteger(rating) || rating < 1 || rating > 5)
     return { error: "Rating must be between 1 and 5." };
+  if (!ISO_DATE_RE.test(watchedOn))
+    return { error: "Invalid date." };
 
   const supabase = await createClient();
   const { error } = await supabase
     .from("movies")
-    .update({ status: "watched", rating, watched_on: new Date().toISOString().slice(0, 10) })
+    .update({ status: "watched", rating, watched_on: watchedOn })
     .eq("id", id);
 
   if (error) return { error: error.message };

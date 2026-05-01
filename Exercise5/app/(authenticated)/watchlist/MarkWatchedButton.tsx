@@ -12,8 +12,13 @@ export default function MarkWatchedButton({ id, title }: { id: string; title: st
 
   function submit() {
     setError(null);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    const watchedOn = `${year}-${month}-${day}`;
     startTransition(async () => {
-      const res = await markAsWatched(id, rating);
+      const res = await markAsWatched(id, rating, watchedOn);
       if (res.error) setError(res.error);
       else setOpen(false);
     });

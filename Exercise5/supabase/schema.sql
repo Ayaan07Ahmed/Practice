@@ -18,6 +18,7 @@ create table if not exists public.movies (
   created_at  timestamptz not null default now(),
   status      text not null default 'watched'
               check (status in ('watched','watchlist')),
+  -- Mirrors validate() in app/(authenticated)/movies/actions.ts.
   constraint movies_rating_check check (
     (status = 'watchlist' and rating is null)
     or (status = 'watched' and rating between 1 and 5)
