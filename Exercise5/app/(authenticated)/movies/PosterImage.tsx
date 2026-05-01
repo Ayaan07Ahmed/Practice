@@ -31,7 +31,6 @@ export default function PosterImage({
           background: "var(--panel-tint)",
           color: "var(--text-dim)",
           fontWeight: 600,
-          borderRadius: "8px",
           fontSize: width >= 120 ? "1.4rem" : "1rem",
         }}
         aria-label={`No poster for ${title}`}
@@ -47,7 +46,7 @@ export default function PosterImage({
       alt={`${title} poster`}
       width={width}
       height={height}
-      style={{ borderRadius: "8px", objectFit: "cover", display: "block" }}
+      style={{ objectFit: "cover", display: "block" }}
       unoptimized={false}
     />
   );
