@@ -123,3 +123,47 @@
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
+.statusField {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.statusField legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0;
+  text-shadow: var(--text-emboss-light);
+}
+.statusPicker {
+  display: flex;
+  gap: 0.5rem;
+}
+.statusOption {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.7rem;
+  background: linear-gradient(180deg, var(--button-white-top) 0%, var(--button-white-bottom) 100%);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  text-shadow: var(--text-emboss-light);
+  box-shadow:
+    var(--gloss-highlight),
+    var(--shadow-sm);
+}
+.statusOption input { display: none; }
+.statusOption.statusOn {
+  background: linear-gradient(180deg, var(--button-top) 0%, var(--button-bottom) 100%);
+  color: var(--accent-fg);
+  text-shadow: var(--text-emboss-dark);
+  border-color: rgba(0, 0, 0, 0.4);
+}

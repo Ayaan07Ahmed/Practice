@@ -48,10 +48,10 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
     const q = search.trim().toLowerCase();
     let list = initialMovies;
     if (q) list = list.filter((m) => m.title.toLowerCase().includes(q));
-    if (minRating > 0) list = list.filter((m) => m.rating >= minRating);
+    if (minRating > 0) list = list.filter((m) => (m.rating ?? 0) >= minRating);
     const sorted = [...list];
     sorted.sort((a, b) => {
-      if (sort === "rating_desc") return b.rating - a.rating;
+      if (sort === "rating_desc") return (b.rating ?? 0) - (a.rating ?? 0);
       if (sort === "title_asc") return a.title.localeCompare(b.title);
       const aw = a.watched_on ?? "";
       const bw = b.watched_on ?? "";
@@ -164,9 +164,11 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
                   width={342}
                   height={513}
                 />
-                <span className={styles.cardRating}>
-                  {"★".repeat(m.rating)}
-                </span>
+                {m.rating !== null && (
+                  <span className={styles.cardRating}>
+                    {"★".repeat(m.rating)}
+                  </span>
+                )}
               </div>
               <div className={styles.cardBody}>
                 <span className={styles.cardTitle}>{m.title}</span>
@@ -208,7 +210,7 @@ export default function MovieList({ initialMovies }: { initialMovies: Movie[] })
               </div>
               <div className={styles.rowMain}>
                 <div className={styles.rowHeader}>
-                  <Stars value={m.rating} />
+                  {m.rating !== null && <Stars value={m.rating} />}
                   <strong className={styles.rowTitle}>{m.title}</strong>
                   {m.year !== null && <span className={styles.year}>({m.year})</span>}
                   {m.watched_on && <span className={styles.date}>{m.watched_on}</span>}

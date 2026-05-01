@@ -7,6 +7,7 @@ export default async function MoviesPage() {
   const { data, error } = await supabase
     .from("movies")
     .select("*")
+    .eq("status", "watched")
     .order("watched_on", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
 

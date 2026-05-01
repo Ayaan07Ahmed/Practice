@@ -24,7 +24,7 @@ export default function MovieView({
       <header className={styles.header}>
         <h2 className={styles.title}>{movie.title}</h2>
         <div className={styles.meta}>
-          <Stars value={movie.rating} />
+          {movie.rating !== null && <Stars value={movie.rating} />}
           {movie.year !== null && (
             <span className={styles.year}>{movie.year}</span>
           )}

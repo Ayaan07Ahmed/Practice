@@ -9,12 +9,24 @@ const CURRENT_YEAR = new Date().getFullYear();
 type ActionResult = { error?: string };
 
 const POSTER_PATH_RE = /^\/[A-Za-z0-9_./-]+$/;
+const VALID_STATUSES = new Set(["watched", "watchlist"]);
 
 function validate(input: MovieInput): string | null {
   const title = input.title?.trim() ?? "";
   if (title.length < 1 || title.length > 200) return "Title must be 1–200 characters.";
-  if (!Number.isInteger(input.rating) || input.rating < 1 || input.rating > 5)
-    return "Rating must be between 1 and 5.";
+  if (!VALID_STATUSES.has(input.status)) return "Invalid status.";
+  if (input.status === "watched") {
+    if (
+      input.rating === null ||
+      !Number.isInteger(input.rating) ||
+      input.rating < 1 ||
+      input.rating > 5
+    ) {
+      return "Rating must be between 1 and 5 for watched movies.";
+    }
+  } else {
+    if (input.rating !== null) return "Watchlist entries must not have a rating.";
+  }
   if (input.year !== null) {
     if (!Number.isInteger(input.year) || input.year < 1888 || input.year > CURRENT_YEAR + 5)
       return `Year must be between 1888 and ${CURRENT_YEAR + 5}.`;
@@ -42,6 +54,7 @@ function normalize(input: MovieInput): MovieInput {
     tmdb_id: input.tmdb_id,
     poster_path: input.poster_path,
     overview: input.overview && input.overview.trim().length > 0 ? input.overview.trim() : null,
+    status: input.status,
   };
 }
 
@@ -86,5 +99,22 @@ export async function deleteMovie(id: string): Promise<ActionResult> {
   const { error } = await supabase.from("movies").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath("/movies");
+  return {};
+}
+
+export async function markAsWatched(id: string, rating: number): Promise<ActionResult> {
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5)
+    return { error: "Rating must be between 1 and 5." };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("movies")
+    .update({ status: "watched", rating, watched_on: new Date().toISOString().slice(0, 10) })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/movies");
+  revalidatePath("/watchlist");
   return {};
 }

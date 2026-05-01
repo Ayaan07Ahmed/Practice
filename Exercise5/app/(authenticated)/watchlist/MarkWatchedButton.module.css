@@ -1,0 +1,41 @@
+.prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  min-width: 14rem;
+}
+.title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.stars {
+  display: flex;
+  gap: 0.1rem;
+}
+.starBtn {
+  background: transparent;
+  border: none;
+  padding: 0.2rem;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gold-dim);
+  box-shadow: none;
+  text-shadow: none;
+}
+.starBtn:hover:not(:disabled),
+.starOn {
+  color: var(--gold-bottom);
+  background: transparent;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+}

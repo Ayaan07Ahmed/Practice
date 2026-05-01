@@ -14,7 +14,10 @@ type Props =
 export default function MovieForm({ mode, onClose, initial }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [year, setYear] = useState(initial?.year?.toString() ?? "");
-  const [rating, setRating] = useState<number>(initial?.rating ?? 4);
+  const [rating, setRating] = useState<number | null>(initial?.rating ?? 4);
+  const [status, setStatus] = useState<"watched" | "watchlist">(
+    initial?.status ?? "watched",
+  );
   const [watchedOn, setWatchedOn] = useState(initial?.watched_on ?? "");
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [tmdbId, setTmdbId] = useState<number | null>(initial?.tmdb_id ?? null);
@@ -62,16 +65,23 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
       setError("Notes must be 2000 characters or fewer.");
       return;
     }
+    if (status === "watched") {
+      if (rating === null || rating < 1 || rating > 5) {
+        setError("Pick a rating from 1 to 5 for watched movies.");
+        return;
+      }
+    }
 
     const input: MovieInput = {
       title: trimmedTitle,
       year: yearNum,
-      rating,
+      rating: status === "watchlist" ? null : rating,
       notes: notes.trim() === "" ? null : notes,
       watched_on: watchedOn === "" ? null : watchedOn,
       tmdb_id: tmdbId,
       poster_path: posterPath,
       overview,
+      status,
     };
 
     startTransition(async () => {
@@ -129,24 +139,52 @@ export default function MovieForm({ mode, onClose, initial }: Props) {
         </label>
       </div>
 
-      <fieldset className={styles.ratingField}>
-        <legend>Rating <em>required</em></legend>
-        <div className={styles.starPicker} role="radiogroup" aria-label="Rating">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <button
-              type="button"
-              key={n}
-              role="radio"
-              aria-checked={rating === n}
-              className={`${styles.starBtn} ${n <= rating ? styles.starOn : ""}`}
-              onClick={() => setRating(n)}
-            >
-              ★
-            </button>
-          ))}
-          <span className={styles.ratingLabel}>{rating} / 5</span>
+      <fieldset className={styles.statusField}>
+        <legend>Status</legend>
+        <div className={styles.statusPicker} role="radiogroup">
+          <label className={`${styles.statusOption} ${status === "watched" ? styles.statusOn : ""}`}>
+            <input
+              type="radio"
+              name="status"
+              value="watched"
+              checked={status === "watched"}
+              onChange={() => setStatus("watched")}
+            />
+            🎬 Watched
+          </label>
+          <label className={`${styles.statusOption} ${status === "watchlist" ? styles.statusOn : ""}`}>
+            <input
+              type="radio"
+              name="status"
+              value="watchlist"
+              checked={status === "watchlist"}
+              onChange={() => setStatus("watchlist")}
+            />
+            ⭐ Want to watch
+          </label>
         </div>
       </fieldset>
+
+      {status === "watched" && (
+        <fieldset className={styles.ratingField}>
+          <legend>Rating <em>required</em></legend>
+          <div className={styles.starPicker} role="radiogroup" aria-label="Rating">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                type="button"
+                key={n}
+                role="radio"
+                aria-checked={rating === n}
+                className={`${styles.starBtn} ${rating !== null && n <= rating ? styles.starOn : ""}`}
+                onClick={() => setRating(n)}
+              >
+                ★
+              </button>
+            ))}
+            <span className={styles.ratingLabel}>{rating ?? "—"} / 5</span>
+          </div>
+        </fieldset>
+      )}
 
       <label className={styles.field}>
         <span>Description <em>auto-filled from TMDB, editable</em></span>
