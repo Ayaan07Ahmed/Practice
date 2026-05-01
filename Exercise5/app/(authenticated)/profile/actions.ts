@@ -15,7 +15,8 @@ export async function updateDisplayName(name: string): Promise<{ error?: string 
 
   if (error) return { error: error.message };
 
-  revalidatePath("/profile");
-  revalidatePath("/movies");
+  // Revalidate from root with type:'layout' so the (authenticated) layout
+  // re-renders and the sidebar's user card picks up the new name.
+  revalidatePath("/", "layout");
   return {};
 }

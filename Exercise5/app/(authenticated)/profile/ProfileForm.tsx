@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateDisplayName } from "./actions";
+import styles from "./profile.module.css";
 
 export default function ProfileForm({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
@@ -20,22 +21,26 @@ export default function ProfileForm({ initialName }: { initialName: string }) {
   }
 
   return (
-    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+    <form onSubmit={submit} className={styles.form}>
       {error && <div className="error">{error}</div>}
-      <label style={{ display: "flex", flexDirection: "column", gap: "0.35rem", fontSize: "0.9rem" }}>
-        <span style={{ fontWeight: 600, color: "var(--text)", textShadow: "var(--text-emboss-light)" }}>Display name</span>
+      <label className={styles.field}>
+        <span>Display name</span>
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSavedAt(null);
+            setError(null);
+          }}
           required
           minLength={1}
           maxLength={50}
         />
       </label>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", alignItems: "center" }}>
+      <div className={styles.actions}>
         {savedAt !== null && !isPending && (
-          <span style={{ color: "var(--text-dim)", fontSize: "0.85rem" }}>Saved.</span>
+          <span className={styles.savedBadge}>Saved.</span>
         )}
         <button type="submit" className="primary" disabled={isPending}>
           {isPending ? "Saving…" : "Save"}
